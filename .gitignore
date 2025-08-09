@@ -1,0 +1,7 @@
+# Project exclude paths
+/target/
+/.idea/
+*.iml
+dependency-reduced-pom.xml
+build.properties
+/build.sh

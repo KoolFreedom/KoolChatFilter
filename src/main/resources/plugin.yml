@@ -1,0 +1,9 @@
+name: KoolFreedomCore
+main: eu.koolfreedom.KoolFreedomCore
+version: ${project.version}
+description: Proof of concept plugin for using non-permission-node based ranks for FreeOP servers
+author: gamingto12
+depend: Vault
+api-version: 1.21.1
+
+# This file will not be used at all to define permission nodes.
