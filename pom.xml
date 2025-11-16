@@ -15,9 +15,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:https://github.com/KoolFreedom/KoolFreedomCore.git</connection>
-        <developerConnection>scm:git:https://github.com/KoolFreedom/KoolFreedomCore.git</developerConnection>
-        <url>https://github.com/KoolFreedom/KoolFreedomCore</url>
+        <connection>scm:git:https://github.com/KoolFreedom/KoolChatFilter.git</connection>
+        <developerConnection>scm:git:https://github.com/KoolFreedom/KoolChatFilter.git</developerConnection>
+        <url>https://github.com/KoolFreedom/KoolChatFilter</url>
     </scm>
 
     <repositories>
@@ -80,7 +80,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <outputFileName>KoolSMPCore.jar</outputFileName>
+                    <outputFileName>KoolChatFilter.jar</outputFileName>
                     <compilerVersion>21</compilerVersion>
                     <release>21</release>
                 </configuration>

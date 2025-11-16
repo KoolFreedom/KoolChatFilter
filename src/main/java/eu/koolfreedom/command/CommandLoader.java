@@ -29,7 +29,7 @@ public class CommandLoader
             try
             {
                 final KoolCommand command = commandClass.getDeclaredConstructor().newInstance();
-                Bukkit.getCommandMap().register(command.getName(), "koolsmpcore", command);
+                Bukkit.getCommandMap().register(command.getName(), "koolchatfilter", command);
                 koolCommands.add(command);
             }
             catch (Throwable ex)

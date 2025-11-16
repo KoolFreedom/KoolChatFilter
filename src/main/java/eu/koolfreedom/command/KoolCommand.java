@@ -19,7 +19,7 @@ import java.util.*;
 
 /**
  * <h1>KoolCommand</h1>
- * <p>The foundation of all commands in KoolSMPCore. Commands are currently registered in the plugin's onEnable method
+ * <p>The foundation of all commands in KoolChatFilter. Commands are currently registered in the plugin's onEnable method
  * 	through the {@link CommandLoader}.</p>
  */
 public abstract class KoolCommand extends Command implements PluginIdentifiableCommand
