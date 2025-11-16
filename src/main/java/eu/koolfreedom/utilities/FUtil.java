@@ -29,20 +29,6 @@ public class FUtil
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
 
-    /**
-     * Broadcasts a staff action to the server.
-     * @param sender        The {@link CommandSender} performing the action.
-     * @param message       The message being broadcast as a String in MiniMessage format.
-     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
-     *                      placeholders, just leave out that argument.
-     */
-    public static void staffAction(@NotNull CommandSender sender, @NotNull String message,
-                                   @NotNull TagResolver... placeholders)
-    {
-        broadcast("<red><sender> - <action>", Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.component("action", miniMessage(message, placeholders)));
-    }
-
     public static void broadcast(Component component)
     {
         Bukkit.broadcast(component);
