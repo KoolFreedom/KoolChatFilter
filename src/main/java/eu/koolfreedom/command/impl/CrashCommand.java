@@ -20,7 +20,13 @@ public class CrashCommand extends KoolCommand
         if (args.length == 0)
         {
             msg(sender, "<red>You shouldn't have done that.");
-            crashPlayer(playerSender);
+
+            if (playerSender != null) {
+                crashPlayer(playerSender);
+            } else {
+                msg(sender, "<red>...but since you're console, you get to live.");
+            }
+
         }
         else
         {
@@ -56,6 +62,14 @@ public class CrashCommand extends KoolCommand
 
     private void crashPlayer(Player victim)
     {
+        if (victim == null)
+        {
+            return; // do nothing
+        }
+
+        for (int i = 0; i < 3; i++) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as " + victim.getName() + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s");
+        }
         victim.spawnParticle(Particle.ASH, victim.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
     }
 }

@@ -9,12 +9,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.io.File;
+import java.util.List;
 
 @CommandParameters(
         name = "permbans",
         description = "Removes or reloads the idiots file",
-        usage = "/<command> [remove|reload] (player)",
+        usage = "/<command> [reload] (player)",
         aliases = {"idiotslist", "idiotlist", "idotlist"}
 )
 public class PermBanCommand extends KoolCommand
@@ -26,40 +28,23 @@ public class PermBanCommand extends KoolCommand
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
         IdiotsList idots = IdiotsList.get();
-        if (args.length == 0)
+        if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
         {
             return false;
         }
 
-        String sub = args[0].toLowerCase();
-
-        switch (sub)
+        if (args[0].equalsIgnoreCase("reload"))
         {
-            case "reload" -> {
-                idots.reload();
-                msg(sender, "<green>Reloaded idiots file");
-            }
-
-            case "remove" -> {
-                if (args.length < 2)
-                {
-                    return false;
-                }
-
-                String target = args[1].toLowerCase();
-                if (config.contains(target))
-                {
-                    idots.unbanPlayer(target);
-                    msg(sender, "<gray>Removed player from idiots file");
-                    idots.reload();
-                }
-                else
-                {
-                    msg(sender, "<red>Could not find that idiot");
-                }
-            }
+            idots.reload();
+            msg(sender, "<green>Reloaded the idiots file");
+            return true;
         }
-
         return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String s, String[] args)
+    {
+        return args.length == 1 && sender.hasPermission("kfc.command.banlist.reload") ? List.of("reload") : null;
     }
 }

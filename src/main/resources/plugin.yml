@@ -5,4 +5,13 @@ description: Hackjob of a chat filter
 author: gamingto12
 api-version: 1.21.1
 
-# This file will not be used at all to define permission nodes.
+permissions:
+  kf.default:
+    children:
+      - kfc.command.koolchatfilter
+  kf.admin:
+    children:
+      - kfc.command.crash
+      - kfc.command.obliterate
+      - kfc.command.permbans
+      - kfc.command.reload
