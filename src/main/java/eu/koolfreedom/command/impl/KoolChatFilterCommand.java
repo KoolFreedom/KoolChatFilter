@@ -3,6 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -26,8 +27,13 @@ public class KoolChatFilterCommand extends KoolCommand
     {
         if (args.length == 0 || !sender.hasPermission("kfc.command.reload"))
         {
+            BuildProperties build = plugin.getBuildMeta();
             msg(sender, "<white><b>KoolChatFilter - A very mean chat filter plugin");
-            msg(sender, "<gray>Version: <version>", Placeholder.unparsed("version", plugin.getPluginMeta().getVersion()));
+            msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
+                    Placeholder.unparsed("build", build.getNumber()));
+            msg(sender, "<gray>Compiled on <white><date></white> by <white><builder></white>.",
+                    Placeholder.unparsed("date", build.getDate()),
+                    Placeholder.unparsed("builder", build.getAuthor()));
             msg(sender, "<gray>Author: <authors>", Placeholder.unparsed("authors", String.valueOf(plugin.getPluginMeta().getAuthors())));
             return true;
         }
