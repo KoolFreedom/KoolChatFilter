@@ -16,7 +16,7 @@ import java.util.List;
 @CommandParameters(
         name = "permbans",
         description = "Removes or reloads the idiots file",
-        usage = "/<command> [reload] (player)",
+        usage = "/<command> [reload]",
         aliases = {"idiotslist", "idiotlist", "idotlist"}
 )
 public class PermBanCommand extends KoolCommand
