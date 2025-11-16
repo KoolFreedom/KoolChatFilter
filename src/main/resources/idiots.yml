@@ -1,0 +1,16 @@
+# KoolChatFilter Indefinite Bans File
+#
+# This serves as the only method of banning people from KoolChatFilter.
+# This hooks into the ChatListener's slur filter, automatically adding online users to this file.
+# Reasons support both MiniMessage and legacy chat formats, to learn more about MiniMessage, see https://webui.advntr.dev/
+badplayer1:
+  uuid: "123e4567-e89b-12d3-a456-426614174000"
+  ips:
+    - "123.123.123.123"
+    - "321.321.321.321"
+  reason: "<red>Bad player"
+anotherplayer:
+  uuid: "abcdef12-3456-7890-abcd-ef1234567890"
+  ips:
+    - "10.0.0.50"
+  reason: "&cHate Speech"
