@@ -2,8 +2,8 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
-import eu.koolfreedom.listener.ChatListener;
-import eu.koolfreedom.listener.PlayerListener;
+import eu.koolfreedom.listener.impl.ChatListener;
+import eu.koolfreedom.listener.impl.PlayerListener;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import lombok.Getter;
@@ -50,7 +50,7 @@ public class KoolChatFilter extends JavaPlugin
 
     private void loadListeners()
     {
-        chatListener = new ChatListener(this);
-        playerListener = new PlayerListener(this);
+        chatListener = new ChatListener();
+        playerListener = new PlayerListener();
     }
 }

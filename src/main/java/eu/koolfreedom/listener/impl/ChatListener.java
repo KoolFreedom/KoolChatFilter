@@ -1,27 +1,19 @@
-package eu.koolfreedom.listener;
+package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.text.Normalizer;
 import java.util.List;
 
-public class ChatListener implements Listener
+public class ChatListener extends KoolListener
 {
-    private final KoolChatFilter plugin;
-
-    public ChatListener(KoolChatFilter plugin)
-    {
-        this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
     @EventHandler @SuppressWarnings("deprecation")
     private void onPlayerChatMessageThatIsASlur(AsyncPlayerChatEvent event)
     {

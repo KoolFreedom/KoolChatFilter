@@ -1,26 +1,17 @@
-package eu.koolfreedom.listener;
+package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import java.awt.*;
-
 public class PlayerListener implements Listener
 {
-    public PlayerListener(KoolChatFilter plugin)
-    {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPermBannedPlayerLogin(PlayerLoginEvent event)
     {

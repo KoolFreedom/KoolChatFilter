@@ -20,6 +20,7 @@ import java.util.List;
         usage = "/<command> [reload]",
         aliases = {"kfc", "koolfilter"}
 )
+@SuppressWarnings("UnstableApiUsage")
 public class KoolChatFilterCommand extends KoolCommand
 {
     @Override
@@ -34,7 +35,8 @@ public class KoolChatFilterCommand extends KoolCommand
             msg(sender, "<gray>Compiled on <white><date></white> by <white><builder></white>.",
                     Placeholder.unparsed("date", build.getDate()),
                     Placeholder.unparsed("builder", build.getAuthor()));
-            msg(sender, "<gray>Author: <authors>", Placeholder.unparsed("authors", String.valueOf(plugin.getPluginMeta().getAuthors())));
+            msg(sender, "<gray>Author: <white><authors>",
+                    Placeholder.unparsed("authors", String.valueOf(plugin.getPluginMeta().getAuthors())));
             return true;
         }
 
