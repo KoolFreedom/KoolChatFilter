@@ -47,8 +47,7 @@ public class ChatListener extends KoolListener
                         IdiotsList.get().reload();
 
                         // Broadcast
-                        FUtil.broadcast(
-                                "<red>CONSOLE - Permanently banning <player> for saying a filtered word",
+                        FUtil.staffAction(Bukkit.getConsoleSender(), "Permanently banning <player> for saying a filtered word",
                                 Placeholder.unparsed("player", player.getName()));
                         Bukkit.dispatchCommand(
                                 Bukkit.getConsoleSender(),

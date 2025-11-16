@@ -7,10 +7,12 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Modifying;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -26,6 +28,19 @@ public class FUtil
     private static final Random RANDOM = new Random();
     private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
+    /**
+     * Broadcasts a staff action to the server.
+     * @param sender        The {@link CommandSender} performing the action.
+     * @param message       The message being broadcast as a String in MiniMessage format.
+     * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
+     *                      placeholders, just leave out that argument.
+     */
+    public static void staffAction(@NotNull CommandSender sender, @NotNull String message,
+                                   @NotNull TagResolver... placeholders)
+    {
+        broadcast("<red><sender> - <action>", Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.component("action", miniMessage(message, placeholders)));
+    }
 
     public static void broadcast(Component component)
     {
