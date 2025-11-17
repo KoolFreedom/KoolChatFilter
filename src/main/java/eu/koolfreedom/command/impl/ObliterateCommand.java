@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.List;
 
 @CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> <reason>", aliases = {"doom"})
 public class ObliterateCommand extends KoolCommand
@@ -65,4 +66,9 @@ public class ObliterateCommand extends KoolCommand
         return true;
     }
 
+    @Override
+    public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
+    {
+        return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
+    }
 }

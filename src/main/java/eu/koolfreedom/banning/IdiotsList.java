@@ -1,6 +1,7 @@
 package eu.koolfreedom.banning;
 
 import eu.koolfreedom.KoolChatFilter;
+import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -47,7 +48,7 @@ public class IdiotsList
         {
             config.save(file);
         } catch (IOException e) {
-            plugin.getSLF4JLogger().error("Failed to save permbans file!", e);
+            FLog.error("Failed to save permbans file!", e);
         }
     }
 
@@ -58,7 +59,7 @@ public class IdiotsList
             config.load(file);
         } catch (Exception e)
         {
-            plugin.getSLF4JLogger().error("Failed to reload permbans file!", e);
+            FLog.error("Failed to reload permbans file!", e);
         }
     }
 
