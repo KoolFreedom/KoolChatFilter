@@ -17,7 +17,7 @@ import java.util.List;
         name = "permbans",
         description = "Removes or reloads the idiots file",
         usage = "/<command> [reload]",
-        aliases = {"idiotslist", "indefbans"}
+        aliases = {"idiotslist", "indefbans", "idiots"}
 )
 public class PermBanCommand extends KoolCommand
 {
@@ -29,7 +29,7 @@ public class PermBanCommand extends KoolCommand
         IdiotsList indefBans = IdiotsList.get();
         if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
         {
-            msg(sender, "<gray>There are <count> indefinite bans",
+            msg(sender, "<gray>There are <count> idiots.",
                     Placeholder.unparsed("count", String.valueOf(indefBans.getBansCount())));
             return true;
         }
