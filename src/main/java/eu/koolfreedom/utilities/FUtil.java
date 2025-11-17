@@ -10,7 +10,6 @@ import net.kyori.adventure.text.minimessage.tag.Modifying;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ public class FUtil
             .resolver(TagResolver.resolver("randomize", RandomColorTag.randomColorTag))
             .build()).build();
     private static final Random RANDOM = new Random();
-    private static final PlainTextComponentSerializer PLAIN_TEXT = PlainTextComponentSerializer.plainText();
 
     /**
      * Broadcasts a staff action to the server.
@@ -125,15 +123,5 @@ public class FUtil
         }
 
         return RANDOM.nextInt(min, max);
-    }
-
-    /**
-     * Get the content of a component as a plain text String.
-     * @param input     The {@link Component} to get as a component.
-     * @return          The resulting String.
-     */
-    public static String plainText(Component input)
-    {
-        return PLAIN_TEXT.serialize(input);
     }
 }
