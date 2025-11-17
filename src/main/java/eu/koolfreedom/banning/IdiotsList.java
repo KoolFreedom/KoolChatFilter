@@ -17,14 +17,13 @@ import java.util.Optional;
 public class IdiotsList
 {
     private static IdiotsList instance;
-    private final KoolChatFilter plugin;
     private final File file;
     private final YamlConfiguration config;
     private final MiniMessage mm = MiniMessage.miniMessage();
 
     private IdiotsList()
     {
-        this.plugin = KoolChatFilter.getInstance();
+        KoolChatFilter plugin = KoolChatFilter.getInstance();
         this.file = new File(plugin.getDataFolder(), "idiots.yml");
         if (!file.exists())
         {
