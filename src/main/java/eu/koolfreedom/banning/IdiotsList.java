@@ -63,6 +63,11 @@ public class IdiotsList
         }
     }
 
+    public int getBansCount()
+    {
+        return config.getKeys(false).size();
+    }
+
     // ======================================================
     // Ban Management
     // ======================================================

@@ -4,6 +4,7 @@ import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ import java.util.List;
         name = "permbans",
         description = "Removes or reloads the idiots file",
         usage = "/<command> [reload]",
-        aliases = {"idiotslist", "idiotlist", "idotlist"}
+        aliases = {"idiotslist", "indefbans"}
 )
 public class PermBanCommand extends KoolCommand
 {
@@ -25,15 +26,17 @@ public class PermBanCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        IdiotsList idots = IdiotsList.get();
+        IdiotsList indefBans = IdiotsList.get();
         if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
         {
-            return false;
+            msg(sender, "<gray>There are <count> indefinite bans",
+                    Placeholder.unparsed("count", String.valueOf(indefBans.getBansCount())));
+            return true;
         }
 
         if (args[0].equalsIgnoreCase("reload"))
         {
-            idots.reload();
+            indefBans.reload();
             msg(sender, "<green>Reloaded the idiots file");
             return true;
         }
