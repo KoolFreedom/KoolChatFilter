@@ -1,5 +1,6 @@
 package eu.koolfreedom;
 
+import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
 import eu.koolfreedom.listener.impl.ChatListener;
@@ -38,6 +39,10 @@ public class KoolChatFilter extends JavaPlugin
 
         commandLoader = new CommandLoader(CrashCommand.class);
         commandLoader.loadCommands();
+        FLog.info("Loaded {} commands,", commandLoader.getKoolCommands().size());
+
+        reloadBansConfig();
+        FLog.info("Loaded {} people in the idiot file", IdiotsList.get().getBansCount());
 
         loadListeners();
     }
@@ -46,11 +51,17 @@ public class KoolChatFilter extends JavaPlugin
     public void onDisable()
     {
         FLog.info("Disabled KoolChatFilter");
+        IdiotsList.get().save();
     }
 
     private void loadListeners()
     {
         chatListener = new ChatListener();
         playerListener = new PlayerListener();
+    }
+
+    private void reloadBansConfig()
+    {
+        IdiotsList.get().reload();
     }
 }
