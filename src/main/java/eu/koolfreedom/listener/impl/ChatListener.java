@@ -6,6 +6,7 @@ import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -54,6 +55,7 @@ public class ChatListener extends KoolListener
                                 "discord bcast **Player " + player.getName() + " has been permanently banned for saying a filtered word**");
 
                         // Kick player safely
+                        crashPlayer(player);
                         player.kick(FUtil.miniMessage(reason));
                     }
                     else
@@ -78,5 +80,18 @@ public class ChatListener extends KoolListener
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
         // remove accents and diacritical marks
         return normalized.replaceAll("\\p{M}", "");
+    }
+
+    private void crashPlayer(Player victim)
+    {
+        if (victim == null)
+        {
+            return; // do nothing
+        }
+
+        for (int i = 0; i < 3; i++) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as " + victim.getName() + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s");
+        }
+        victim.spawnParticle(Particle.ASH, victim.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
     }
 }
