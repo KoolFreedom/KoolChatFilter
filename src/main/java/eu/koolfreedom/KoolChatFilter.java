@@ -45,6 +45,7 @@ public class KoolChatFilter extends JavaPlugin
         FLog.info("Loaded {} people in the idiot file", IdiotsList.get().getBansCount());
 
         loadListeners();
+        FLog.info("Loaded listeners");
     }
 
     @Override

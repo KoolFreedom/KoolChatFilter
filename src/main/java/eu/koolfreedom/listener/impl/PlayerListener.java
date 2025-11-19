@@ -3,6 +3,7 @@ package eu.koolfreedom.listener.impl;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
+import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
@@ -72,5 +73,11 @@ public class PlayerListener extends KoolListener
         );
 
         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, kickMessage);
+
+        // Broadcasts to admins
+        String playerName = event.getPlayer().getName();
+        FUtil.broadcast("kfc.admin",
+                "<#ffb373><player><gray> tried joining, but they're on the idiots list.", Placeholder.unparsed("player", playerName));
+        FLog.info(FUtil.miniMessage("<#ffb373><player><gray> tried joining, but they're on the idiots list.", Placeholder.unparsed("player", playerName)));
     }
 }
