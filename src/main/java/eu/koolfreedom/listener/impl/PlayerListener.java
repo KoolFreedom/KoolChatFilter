@@ -76,7 +76,7 @@ public class PlayerListener extends KoolListener
 
         // Broadcasts to admins
         String playerName = event.getPlayer().getName();
-        FUtil.broadcast("kfc.admin",
+        FUtil.broadcast("kf.admin",
                 "<#ffb373><player><gray> tried joining, but they're on the idiots list.", Placeholder.unparsed("player", playerName));
         FLog.info(FUtil.miniMessage("<#ffb373><player><gray> tried joining, but they're on the idiots list.", Placeholder.unparsed("player", playerName)));
     }
