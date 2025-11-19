@@ -3,7 +3,7 @@ main: eu.koolfreedom.KoolChatFilter
 version: ${project.version}
 description: Hackjob of a chat filter
 author: gamingto12
-api-version: 1.21.1
+api-version: 1.21
 
 permissions:
   kf.default:

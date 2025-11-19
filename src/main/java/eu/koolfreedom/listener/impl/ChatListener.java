@@ -4,14 +4,13 @@ import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
+
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import java.text.Normalizer;
-import java.util.List;
 
 public class ChatListener extends KoolListener
 {
@@ -19,79 +18,79 @@ public class ChatListener extends KoolListener
     private void onPlayerChatMessageThatIsASlur(AsyncPlayerChatEvent event)
     {
         Player player = event.getPlayer();
-
-        // Normalize the message
         String rawMessage = event.getMessage();
-        String message = normalize(rawMessage).toLowerCase();
-        String cleanMessage = stripNonLetters(message);
 
-        List<String> blockedWords = KoolChatFilter.getInstance().getConfig().getStringList("filtered-stuff");
+        // All filtering logic now in FilterUtil
+        if (!FUtil.containsBlockedWord(rawMessage)) {
+            return; // safe message
+        }
 
-        for (String word : blockedWords)
+        // Cancel message for all viewers
+        event.setCancelled(true);
+
+        // Echo back the "unfiltered format" so players see what they said
+        player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), rawMessage));
+
+        String reason = "<red>You shouldn't have done that.";
+
+        // Switch to main thread for banning/kicking
+        Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () ->
         {
-            String cleanWord = stripNonLetters(normalize(word.toLowerCase()));
-
-            if (message.contains(word.toLowerCase()) || cleanMessage.contains(cleanWord))
+            if (!player.isOnline())
             {
-                event.setCancelled(true);
-                player.sendMessage(String.format(event.getFormat(), player.getDisplayName(), rawMessage));
-
-                String reason = "<red>You shouldn't have done that.";
-
-                // Schedule on main thread
-                Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () -> {
-                    if (player.isOnline())
-                    {
-                        // Add to the idiot list
-                        IdiotsList.get().banPlayer(player, "Hate Speech");
-                        IdiotsList.get().save();
-                        IdiotsList.get().reload();
-
-                        // Broadcast
-                        FUtil.staffAction(Bukkit.getConsoleSender(), "Permanently banning <player> for saying a filtered word",
-                                Placeholder.unparsed("player", player.getName()));
-                        Bukkit.dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "discord bcast **Player " + player.getName() + " has been permanently banned for saying a filtered word**");
-
-                        // Kick player safely
-                        crashPlayer(player);
-                        player.kick(FUtil.miniMessage(reason));
-                    }
-                    else
-                    {
-                        Bukkit.getServer().dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "tempban " + player.getName() + " 999y Hate Speech"
-                        );
-                    }
-                });
-
+                // Fallback: if they left mid-message
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        "tempban " + player.getName() + " 999y Hate Speech"
+                );
                 return;
             }
-        }
-    }
 
-    public static String stripNonLetters(String input) {
-        return input.replaceAll("[^a-zA-Z]", "");
-    }
+            // Add to idiots list
+            IdiotsList.get().banPlayer(player, "Hate Speech");
+            IdiotsList.get().save();
+            IdiotsList.get().reload();
 
-    public static String normalize(String input) {
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        // remove accents and diacritical marks
-        return normalized.replaceAll("\\p{M}", "");
+            // Staff broadcast
+            FUtil.staffAction(
+                    Bukkit.getConsoleSender(),
+                    "Permanently banning <player> for saying a filtered word",
+                    Placeholder.unparsed("player", player.getName())
+            );
+
+            // Discord broadcast
+            Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    "discord bcast **Player " + player.getName()
+                            + " has been permanently banned for saying a filtered word**"
+            );
+
+            // Fun effect + kick
+            crashPlayer(player);
+            player.kick(FUtil.miniMessage(reason));
+        });
     }
 
     private void crashPlayer(Player victim)
     {
-        if (victim == null)
+        if (victim == null) return;
+
+        for (int i = 0; i < 3; i++)
         {
-            return; // do nothing
+            Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    "execute as " + victim.getName()
+                            + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"
+            );
         }
 
-        for (int i = 0; i < 3; i++) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as " + victim.getName() + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s");
-        }
-        victim.spawnParticle(Particle.ASH, victim.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
+        victim.spawnParticle(
+                Particle.ASH,
+                victim.getLocation(),
+                Integer.MAX_VALUE,
+                1, 1, 1, 1,
+                null,
+                true
+        );
     }
 }

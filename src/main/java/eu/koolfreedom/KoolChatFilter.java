@@ -3,8 +3,7 @@ package eu.koolfreedom;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
-import eu.koolfreedom.listener.impl.ChatListener;
-import eu.koolfreedom.listener.impl.PlayerListener;
+import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import lombok.Getter;
@@ -19,6 +18,10 @@ public class KoolChatFilter extends JavaPlugin
     private CommandLoader commandLoader;
     public ChatListener chatListener;
     public PlayerListener playerListener;
+    public AnvilListener anvilListener;
+    public BookListener bookListener;
+    public SignListener signListener;
+    public CommandListener commandListener;
 
     @Override
     public void onLoad()
@@ -33,9 +36,6 @@ public class KoolChatFilter extends JavaPlugin
         FLog.info("Created by gamingto12");
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
-
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
 
         commandLoader = new CommandLoader(CrashCommand.class);
         commandLoader.loadCommands();
@@ -59,6 +59,10 @@ public class KoolChatFilter extends JavaPlugin
     {
         chatListener = new ChatListener();
         playerListener = new PlayerListener();
+        anvilListener = new AnvilListener();
+        bookListener = new BookListener();
+        commandListener = new CommandListener();
+        signListener = new SignListener();
     }
 
     private void reloadBansConfig()

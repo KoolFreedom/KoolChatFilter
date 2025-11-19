@@ -1,5 +1,6 @@
 package eu.koolfreedom.utilities;
 
+import eu.koolfreedom.config.ConfigEntry;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -14,7 +15,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.Normalizer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class FUtil
@@ -123,5 +126,34 @@ public class FUtil
         }
 
         return RANDOM.nextInt(min, max);
+    }
+
+    /**
+     * Checks to see if the message contains a blocked word/phrase
+     * @param input   The word/phrase
+     */
+    public static boolean containsBlockedWord(String input) {
+        String message = normalize(input).toLowerCase();
+        String cleanMessage = stripNonLetters(message);
+
+        List<String> blockedWords = ConfigEntry.FILTER.getStringList();
+
+        for (String word : blockedWords) {
+            String cleanWord = stripNonLetters(normalize(word.toLowerCase()));
+
+            if (message.contains(word.toLowerCase()) || cleanMessage.contains(cleanWord)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String stripNonLetters(String input) {
+        return input.replaceAll("[^a-zA-Z]", "");
+    }
+
+    public static String normalize(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "");
     }
 }
