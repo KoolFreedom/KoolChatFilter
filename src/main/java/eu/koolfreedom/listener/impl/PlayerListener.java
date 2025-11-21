@@ -4,7 +4,6 @@ import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
-import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
