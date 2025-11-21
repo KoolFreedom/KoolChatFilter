@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
 import eu.koolfreedom.utilities.FLog;
@@ -66,10 +67,11 @@ public class PlayerListener extends KoolListener
         Component kickMessage = FUtil.miniMessage("""
         <red>Your <ban_type> is indefinitely banned from this server!
         <red>Reason:</red> <gold><reason>
-        <red>Appeal at:</red> <gold>https://discord.gg/MTYrSgVkmd
+        <red>Appeal at:</red> <gold><ban_url>
         """,
                 Placeholder.component("reason", reason),
-                Placeholder.unparsed("ban_type", banType)
+                Placeholder.unparsed("ban_type", banType),
+                Placeholder.unparsed("ban_url", ConfigEntry.BAN_URL.getString())
         );
 
         event.disallow(PlayerLoginEvent.Result.KICK_BANNED, kickMessage);

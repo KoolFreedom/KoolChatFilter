@@ -8,7 +8,8 @@ import java.util.List;
 @Getter
 public enum ConfigEntry
 {
-    FILTER(List.class, "filtered-stuff");
+    FILTER(List.class, "filtered-stuff"),
+    BAN_URL(String.class, "ban_url");
     //
     private final Class<?> type;
     private final String configName;
