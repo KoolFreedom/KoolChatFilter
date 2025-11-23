@@ -22,15 +22,18 @@ public class CommandListener extends KoolListener
         String content = msg.startsWith("/") ? msg.substring(1) : msg;
 
         // Check the entire command, NOT just args
-        if (!FUtil.containsBlockedWord(content)) {
-            return;
+        if (!FUtil.containsBlockedWord(content))
+        {
+            return; // do nothing
         }
 
         event.setCancelled(true);
 
-        Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () -> {
-            if (!player.isOnline()) {
-                return;
+        Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () ->
+        {
+            if (!player.isOnline())
+            {
+                return; // do nothing... cause what else could you do
             }
 
             IdiotsList.get().banPlayer(player, "Hate Speech (via Commands)");
@@ -43,10 +46,14 @@ public class CommandListener extends KoolListener
                     Placeholder.unparsed("player", player.getName())
             );
 
-            Bukkit.dispatchCommand(
-                    Bukkit.getConsoleSender(),
-                    "discord bcast **Player " + player.getName() + " has been permanently banned for filtered command content**"
-            );
+            if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
+            {
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        "discord bcast **Player " + player.getName()
+                                + " has been permanently banned for filtered command content**"
+                );
+            }
 
             player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
         });

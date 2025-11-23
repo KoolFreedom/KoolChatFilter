@@ -46,10 +46,14 @@ public class AnvilListener extends KoolListener {
                     "Permanently banning <player> for renaming an item to a filtered word via anvil",
                     Placeholder.unparsed("player", player.getName()));
 
-            Bukkit.dispatchCommand(
-                    Bukkit.getConsoleSender(),
-                    "discord bcast **Player " + player.getName() + " has been permanently banned for filtered anvil item name**"
-            );
+            if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
+            {
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        "discord bcast **Player " + player.getName()
+                                + " has been permanently banned for renaming an item to a filtered word via anvil**"
+                );
+            }
 
             player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
         });
