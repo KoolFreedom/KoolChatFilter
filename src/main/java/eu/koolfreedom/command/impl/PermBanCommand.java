@@ -1,6 +1,5 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
@@ -10,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.awt.*;
-import java.io.File;
 import java.util.List;
 
 @CommandParameters(
@@ -21,8 +19,6 @@ import java.util.List;
 )
 public class PermBanCommand extends KoolCommand
 {
-    private final File file = new File(KoolChatFilter.getInstance().getDataFolder(), "idiots.yml");
-
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {

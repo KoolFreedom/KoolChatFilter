@@ -45,7 +45,7 @@ public class KoolChatFilterCommand extends KoolCommand
             try
             {
                 KoolChatFilter.getInstance().reloadConfig();
-                msg(sender, "<green>VenomCore successfully reloaded");
+                msg(sender, "<green>Configuration successfully reloaded");
             }
             catch (Exception e)
             {
