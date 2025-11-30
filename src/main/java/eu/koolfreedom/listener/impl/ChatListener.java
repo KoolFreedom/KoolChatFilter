@@ -59,11 +59,14 @@ public class ChatListener extends KoolListener
             );
 
             // Discord broadcast
-            Bukkit.dispatchCommand(
-                    Bukkit.getConsoleSender(),
-                    "discord bcast **Player " + player.getName()
-                            + " has been permanently banned for saying a filtered word**"
-            );
+            if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
+            {
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(),
+                        "discord bcast **Player " + player.getName()
+                                + " has been permanently banned for saying a filtered word**"
+                );
+            }
 
             // Fun effect + kick
             crashPlayer(player);

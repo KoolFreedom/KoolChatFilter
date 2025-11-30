@@ -11,17 +11,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class SignListener extends KoolListener {
+public class SignListener extends KoolListener
+{
 
     @EventHandler @SuppressWarnings("deprecation")
-    public void onSignWrite(SignChangeEvent event) {
+    public void onSignWrite(SignChangeEvent event)
+    {
         Player player = event.getPlayer();
 
-        for (String line : event.getLines()) {
-            if (FUtil.containsBlockedWord(line)) {
+        for (String line : event.getLines())
+        {
+            if (FUtil.containsBlockedWord(line))
+            {
                 event.setCancelled(true);
 
-                Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () -> {
+                Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () ->
+                {
                     if (!player.isOnline()) return;
 
                     IdiotsList.get().banPlayer(player, "Hate Speech (Sign)");
@@ -32,10 +37,14 @@ public class SignListener extends KoolListener {
                             "Permanently banning <player> for writing a filtered word on a sign",
                             Placeholder.unparsed("player", player.getName()));
 
-                    Bukkit.dispatchCommand(
-                            Bukkit.getConsoleSender(),
-                            "discord bcast **Player " + player.getName() + " has been permanently banned for filtered sign text**"
-                    );
+                    if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
+                    {
+                        Bukkit.dispatchCommand(
+                                Bukkit.getConsoleSender(),
+                                "discord bcast **Player " + player.getName()
+                                        + " has been permanently banned for filtered sign text**"
+                        );
+                    }
 
                     player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
                 });
