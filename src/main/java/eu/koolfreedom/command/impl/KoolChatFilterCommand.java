@@ -29,13 +29,13 @@ public class KoolChatFilterCommand extends KoolCommand
         if (args.length == 0 || !sender.hasPermission("kfc.command.reload"))
         {
             BuildProperties build = plugin.getBuildMeta();
-            msg(sender, "<white><b>KoolChatFilter - A very mean chat filter plugin");
-            msg(sender, "<gray>Version <white><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
+            msg(sender, "<#89b4fa><b>KoolChatFilter - A very mean chat filter plugin");
+            msg(sender, "<#89dceb>Version <#89b4fa><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
                     Placeholder.unparsed("build", build.getNumber()));
-            msg(sender, "<gray>Compiled on <white><date></white> by <white><builder></white>.",
+            msg(sender, "<#89dceb>Compiled on <#89b4fa><date></#89b4fa> by <#89b4fa><builder></#89b4fa>.",
                     Placeholder.unparsed("date", build.getDate()),
                     Placeholder.unparsed("builder", build.getAuthor()));
-            msg(sender, "<gray>Author: <white><authors>",
+            msg(sender, "<#89dceb>Author: <#89b4fa><authors>",
                     Placeholder.unparsed("authors", String.valueOf(plugin.getPluginMeta().getAuthors())));
             return true;
         }
@@ -45,12 +45,12 @@ public class KoolChatFilterCommand extends KoolCommand
             try
             {
                 KoolChatFilter.getInstance().reloadConfig();
-                msg(sender, "<green>Configuration successfully reloaded");
+                msg(sender, "<#a6da95>Configuration successfully reloaded");
             }
             catch (Exception e)
             {
                 FLog.error("Failed to load configuration", e);
-                msg(sender, "<red>An error occurred whilst attempting to reload the configuration.");
+                msg(sender, "<#d20f39>An error occurred whilst attempting to reload the configuration.");
             }
             return true;
         }

@@ -112,7 +112,7 @@ public class IdiotsList
     // ======================================================
 
     public String getReason(String name) {
-        return config.getString(name.toLowerCase() + ".reason", "No reason provided.");
+        return config.getString(name.toLowerCase() + ".reason", "You've met with a terrible fate, haven't you?");
     }
 
     public Component getReasonComponent(String name) {
