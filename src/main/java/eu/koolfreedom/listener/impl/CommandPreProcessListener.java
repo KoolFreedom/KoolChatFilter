@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-public class CommandListener extends KoolListener
+public class CommandPreProcessListener extends KoolListener
 {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event)

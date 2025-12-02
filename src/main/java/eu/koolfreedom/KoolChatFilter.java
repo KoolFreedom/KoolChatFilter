@@ -21,7 +21,7 @@ public class KoolChatFilter extends JavaPlugin
     public AnvilListener anvilListener;
     public BookListener bookListener;
     public SignListener signListener;
-    public CommandListener commandListener;
+    public CommandPreProcessListener commandPreProcessListener;
 
     @Override
     public void onLoad()
@@ -61,7 +61,7 @@ public class KoolChatFilter extends JavaPlugin
         playerListener = new PlayerListener();
         anvilListener = new AnvilListener();
         bookListener = new BookListener();
-        commandListener = new CommandListener();
+        commandPreProcessListener = new CommandPreProcessListener();
         signListener = new SignListener();
     }
 
