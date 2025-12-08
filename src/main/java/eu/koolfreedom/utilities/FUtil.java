@@ -16,9 +16,8 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.Normalizer;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class FUtil
 {
@@ -28,6 +27,21 @@ public class FUtil
             .resolver(TagResolver.resolver("randomize", RandomColorTag.randomColorTag))
             .build()).build();
     private static final Random RANDOM = new Random();
+    // Map of common lookalike Unicode letters to Latin
+    private static final Map<Character, Character> LOOKALIKE_MAP = new HashMap<>();
+    static {
+        LOOKALIKE_MAP.put('а', 'a'); // Cyrillic a
+        LOOKALIKE_MAP.put('е', 'e'); // Cyrillic e
+        LOOKALIKE_MAP.put('і', 'i'); // Cyrillic i
+        LOOKALIKE_MAP.put('о', 'o'); // Cyrillic o
+        LOOKALIKE_MAP.put('ѕ', 's'); // Cyrillic s
+        LOOKALIKE_MAP.put('р', 'p'); // Cyrillic p
+        LOOKALIKE_MAP.put('ј', 'j'); // Cyrillic j
+        LOOKALIKE_MAP.put('ո', 'n'); // Armenian n
+        LOOKALIKE_MAP.put('ս', 's'); // Armenian s
+        LOOKALIKE_MAP.put('հ', 'h'); // Armenian h
+        // Add more as needed for evasion attempts
+    };
 
     /**
      * Broadcasts a staff action to the server.
@@ -133,27 +147,44 @@ public class FUtil
      * @param input   The word/phrase
      */
     public static boolean containsBlockedWord(String input) {
-        String message = normalize(input).toLowerCase();
-        String cleanMessage = stripNonLetters(message);
+        String message = sanitizeMessage(input);
 
         List<String> blockedWords = ConfigEntry.FILTER.getStringList();
 
         for (String word : blockedWords) {
-            String cleanWord = stripNonLetters(normalize(word.toLowerCase()));
+            String cleanWord = sanitizeMessage(word);
 
-            if (message.contains(word.toLowerCase()) || cleanMessage.contains(cleanWord)) {
+            // Match multi-word phrases exactly, with word boundaries
+            String pattern = "\\b" + Pattern.quote(cleanWord) + "\\b";
+
+            if (Pattern.compile(pattern).matcher(message).find()) {
                 return true;
             }
         }
         return false;
     }
 
-    public static String stripNonLetters(String input) {
-        return input.replaceAll("[^a-zA-Z]", "");
-    }
+    private static String sanitizeMessage(String input) {
+        // 1. Normalize accents
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
 
-    public static String normalize(String input) {
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-        return normalized.replaceAll("\\p{M}", "");
+        // 2. Map lookalike letters to Latin
+        StringBuilder sb = new StringBuilder();
+        for (char c : normalized.toCharArray()) {
+            sb.append(LOOKALIKE_MAP.getOrDefault(c, c));
+        }
+        normalized = sb.toString();
+
+        // 3. Lowercase
+        normalized = normalized.toLowerCase();
+
+        // 4. Replace non-letters with spaces (keep word boundaries)
+        normalized = normalized.replaceAll("[^a-z ]", " ");
+
+        // 5. Collapse multiple spaces
+        normalized = normalized.replaceAll("\\s+", " ").trim();
+
+        return normalized;
     }
 }
