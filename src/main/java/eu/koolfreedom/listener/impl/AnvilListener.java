@@ -42,6 +42,7 @@ public class AnvilListener extends KoolListener {
 
             IdiotsList.get().banPlayer(player, "Hate Speech (Item Rename via Anvil)");
             IdiotsList.get().save();
+            IdiotsList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.ANVIL);
             CosmeticUtil.discordAlert(player, ViolationSource.ANVIL);

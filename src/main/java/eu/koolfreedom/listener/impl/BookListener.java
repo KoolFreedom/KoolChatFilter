@@ -2,9 +2,13 @@ package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
 
+import eu.koolfreedom.utilities.extra.CosmeticUtil;
+import eu.koolfreedom.utilities.extra.ViolationSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,9 +24,9 @@ public class BookListener extends KoolListener
 
         for (String page : event.getNewBookMeta().getPages())
         {
-            if (FUtil.containsBlockedWord(page))
+            FilterResult result = FilterEngine.check(page);
+            if ((result.matched()))
             {
-
                 event.setCancelled(true);
 
                 Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () ->
@@ -33,20 +37,11 @@ public class BookListener extends KoolListener
                     IdiotsList.get().save();
                     IdiotsList.get().reload();
 
-                    FUtil.staffAction(Bukkit.getConsoleSender(),
-                            "Permanently banning <player> for filtered book content",
-                            Placeholder.unparsed("player", player.getName()));
+                    CosmeticUtil.staffAlert(player, ViolationSource.BOOK);
+                    CosmeticUtil.discordAlert(player, ViolationSource.BOOK);
+                    CosmeticUtil.crashPlayer(player);
 
-                    if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
-                    {
-                        Bukkit.dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "discord bcast **Player " + player.getName()
-                                        + " has been permanently banned for filtered book content**"
-                        );
-                    }
-
-                    player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
+                    player.kick(CosmeticUtil.kickMessage(ViolationSource.BOOK));
                 });
                 return;
             }

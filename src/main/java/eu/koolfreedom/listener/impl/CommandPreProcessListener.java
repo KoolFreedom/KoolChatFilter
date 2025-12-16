@@ -2,9 +2,11 @@ package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
-import eu.koolfreedom.utilities.FUtil;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import eu.koolfreedom.utilities.extra.CosmeticUtil;
+import eu.koolfreedom.utilities.extra.ViolationSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +24,8 @@ public class CommandPreProcessListener extends KoolListener
         String content = msg.startsWith("/") ? msg.substring(1) : msg;
 
         // Check the entire command, NOT just args
-        if (!FUtil.containsBlockedWord(content))
+        FilterResult result = FilterEngine.check(content);
+        if (!result.matched())
         {
             return; // do nothing
         }
@@ -40,22 +43,11 @@ public class CommandPreProcessListener extends KoolListener
             IdiotsList.get().save();
             IdiotsList.get().reload();
 
-            FUtil.staffAction(
-                    Bukkit.getConsoleSender(),
-                    "Permanently banning <player> for sending a filtered word through command",
-                    Placeholder.unparsed("player", player.getName())
-            );
+            CosmeticUtil.staffAlert(player, ViolationSource.COMMAND);
+            CosmeticUtil.discordAlert(player, ViolationSource.COMMAND);
+            CosmeticUtil.crashPlayer(player);
 
-            if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
-            {
-                Bukkit.dispatchCommand(
-                        Bukkit.getConsoleSender(),
-                        "discord bcast **Player " + player.getName()
-                                + " has been permanently banned for filtered command content**"
-                );
-            }
-
-            player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
+            player.kick(CosmeticUtil.kickMessage(ViolationSource.COMMAND));
         });
     }
 

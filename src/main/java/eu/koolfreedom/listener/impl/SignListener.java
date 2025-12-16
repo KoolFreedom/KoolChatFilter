@@ -2,9 +2,13 @@ package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
 
+import eu.koolfreedom.utilities.extra.CosmeticUtil;
+import eu.koolfreedom.utilities.extra.ViolationSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +25,8 @@ public class SignListener extends KoolListener
 
         for (String line : event.getLines())
         {
-            if (FUtil.containsBlockedWord(line))
+            FilterResult result = FilterEngine.check(line);
+            if (result.matched())
             {
                 event.setCancelled(true);
 
@@ -33,20 +38,11 @@ public class SignListener extends KoolListener
                     IdiotsList.get().save();
                     IdiotsList.get().reload();
 
-                    FUtil.staffAction(Bukkit.getConsoleSender(),
-                            "Permanently banning <player> for writing a filtered word on a sign",
-                            Placeholder.unparsed("player", player.getName()));
+                    CosmeticUtil.staffAlert(player, ViolationSource.SIGN);
+                    CosmeticUtil.discordAlert(player, ViolationSource.SIGN);
+                    CosmeticUtil.crashPlayer(player);
 
-                    if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
-                    {
-                        Bukkit.dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "discord bcast **Player " + player.getName()
-                                        + " has been permanently banned for filtered sign text**"
-                        );
-                    }
-
-                    player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
+                    player.kick(CosmeticUtil.kickMessage(ViolationSource.SIGN));
                 });
                 return;
             }
