@@ -3,6 +3,7 @@ package eu.koolfreedom;
 import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
+import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
@@ -40,6 +41,9 @@ public class KoolChatFilter extends JavaPlugin
         commandLoader = new CommandLoader(CrashCommand.class);
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands,", commandLoader.getKoolCommands().size());
+
+        FilterEngine.reload();
+        FLog.info("Reloaded the Filter Engine");
 
         reloadBansConfig();
         FLog.info("Loaded {} people in the idiot file", IdiotsList.get().getBansCount());

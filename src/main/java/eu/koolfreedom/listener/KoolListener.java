@@ -9,4 +9,6 @@ public abstract class KoolListener implements Listener
     {
         KoolChatFilter.getInstance().getServer().getPluginManager().registerEvents(this, KoolChatFilter.getInstance());
     }
+
+    protected final KoolChatFilter plugin = KoolChatFilter.getInstance();
 }

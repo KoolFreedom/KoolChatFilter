@@ -1,11 +1,12 @@
 package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
-import eu.koolfreedom.utilities.FUtil;
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import eu.koolfreedom.utilities.extra.CosmeticUtil;
+import eu.koolfreedom.utilities.extra.ViolationSource;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,31 +32,21 @@ public class AnvilListener extends KoolListener {
 
         String name = meta.getDisplayName();
 
-        if (!FUtil.containsBlockedWord(name)) return;
+        FilterResult result = FilterEngine.check(name);
+        if (!result.matched()) return; // safe message
 
         event.setCancelled(true);
 
-        Bukkit.getScheduler().runTask(KoolChatFilter.getInstance(), () -> {
-            if (!player.isOnline()) return;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!player.isOnline()) return; // can't do anything :(
 
-            IdiotsList.get().banPlayer(player, "Hate Speech (Anvil Rename)");
+            IdiotsList.get().banPlayer(player, "Hate Speech (Item Rename via Anvil)");
             IdiotsList.get().save();
-            IdiotsList.get().reload();
 
-            FUtil.staffAction(Bukkit.getConsoleSender(),
-                    "Permanently banning <player> for renaming an item to a filtered word via anvil",
-                    Placeholder.unparsed("player", player.getName()));
-
-            if (Bukkit.getPluginManager().isPluginEnabled("DiscordSRV"))
-            {
-                Bukkit.dispatchCommand(
-                        Bukkit.getConsoleSender(),
-                        "discord bcast **Player " + player.getName()
-                                + " has been permanently banned for renaming an item to a filtered word via anvil**"
-                );
-            }
-
-            player.kick(FUtil.miniMessage("<red>You shouldn't have done that."));
+            CosmeticUtil.staffAlert(player, ViolationSource.ANVIL);
+            CosmeticUtil.discordAlert(player, ViolationSource.ANVIL);
+            CosmeticUtil.crashPlayer(player);
+            player.kick(CosmeticUtil.kickMessage(ViolationSource.ANVIL));
         });
     }
 }
