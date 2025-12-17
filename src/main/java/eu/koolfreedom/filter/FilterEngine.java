@@ -1,6 +1,7 @@
 package eu.koolfreedom.filter;
 
 import eu.koolfreedom.config.ConfigEntry;
+import eu.koolfreedom.utilities.FLog;
 
 import java.text.Normalizer;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public final class FilterEngine
             String regex = "\\b" + Pattern.quote(clean) + "\\b";
             RULES.put(rule, Pattern.compile(regex));
         }
+        FLog.info("Filter engine reloaded.");
     }
 
     public static FilterResult check(String input)

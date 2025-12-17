@@ -43,7 +43,6 @@ public class KoolChatFilter extends JavaPlugin
         FLog.info("Loaded {} commands,", commandLoader.getKoolCommands().size());
 
         FilterEngine.reload();
-        FLog.info("Reloaded the Filter Engine");
 
         reloadBansConfig();
         FLog.info("Loaded {} people in the idiot file", PermBansList.get().getBansCount());
