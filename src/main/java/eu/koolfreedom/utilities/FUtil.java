@@ -27,21 +27,6 @@ public class FUtil
             .resolver(TagResolver.resolver("randomize", RandomColorTag.randomColorTag))
             .build()).build();
     private static final Random RANDOM = new Random();
-    // Map of common lookalike Unicode letters to Latin
-    private static final Map<Character, Character> LOOKALIKE_MAP = new HashMap<>();
-    static {
-        LOOKALIKE_MAP.put('а', 'a'); // Cyrillic a
-        LOOKALIKE_MAP.put('е', 'e'); // Cyrillic e
-        LOOKALIKE_MAP.put('і', 'i'); // Cyrillic i
-        LOOKALIKE_MAP.put('о', 'o'); // Cyrillic o
-        LOOKALIKE_MAP.put('ѕ', 's'); // Cyrillic s
-        LOOKALIKE_MAP.put('р', 'p'); // Cyrillic p
-        LOOKALIKE_MAP.put('ј', 'j'); // Cyrillic j
-        LOOKALIKE_MAP.put('ո', 'n'); // Armenian n
-        LOOKALIKE_MAP.put('ս', 's'); // Armenian s
-        LOOKALIKE_MAP.put('հ', 'h'); // Armenian h
-        // Add more as needed for evasion attempts
-    };
 
     /**
      * Broadcasts a staff action to the server.
