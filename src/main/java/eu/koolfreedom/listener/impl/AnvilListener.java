@@ -44,10 +44,10 @@ public class AnvilListener extends KoolListener {
             IdiotsList.get().save();
             IdiotsList.get().reload();
 
-            CosmeticUtil.staffAlert(player, ViolationSource.ANVIL);
-            CosmeticUtil.discordAlert(player, ViolationSource.ANVIL);
+            CosmeticUtil.staffAlert(player, ViolationSource.Anvil);
+            CosmeticUtil.discordAlert(player, ViolationSource.Anvil);
             CosmeticUtil.crashPlayer(player);
-            player.kick(CosmeticUtil.kickMessage(ViolationSource.ANVIL));
+            player.kick(CosmeticUtil.kickMessage(ViolationSource.Anvil));
         });
     }
 }

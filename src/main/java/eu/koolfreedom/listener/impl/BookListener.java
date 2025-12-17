@@ -5,11 +5,9 @@ import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
-import eu.koolfreedom.utilities.FUtil;
 
 import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import eu.koolfreedom.utilities.extra.ViolationSource;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,11 +35,11 @@ public class BookListener extends KoolListener
                     IdiotsList.get().save();
                     IdiotsList.get().reload();
 
-                    CosmeticUtil.staffAlert(player, ViolationSource.BOOK);
-                    CosmeticUtil.discordAlert(player, ViolationSource.BOOK);
+                    CosmeticUtil.staffAlert(player, ViolationSource.Book);
+                    CosmeticUtil.discordAlert(player, ViolationSource.Book);
                     CosmeticUtil.crashPlayer(player);
 
-                    player.kick(CosmeticUtil.kickMessage(ViolationSource.BOOK));
+                    player.kick(CosmeticUtil.kickMessage(ViolationSource.Book));
                 });
                 return;
             }

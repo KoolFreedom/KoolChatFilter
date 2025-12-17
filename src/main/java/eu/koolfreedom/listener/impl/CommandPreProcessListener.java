@@ -43,11 +43,11 @@ public class CommandPreProcessListener extends KoolListener
             IdiotsList.get().save();
             IdiotsList.get().reload();
 
-            CosmeticUtil.staffAlert(player, ViolationSource.COMMAND);
-            CosmeticUtil.discordAlert(player, ViolationSource.COMMAND);
+            CosmeticUtil.staffAlert(player, ViolationSource.Command);
+            CosmeticUtil.discordAlert(player, ViolationSource.Command);
             CosmeticUtil.crashPlayer(player);
 
-            player.kick(CosmeticUtil.kickMessage(ViolationSource.COMMAND));
+            player.kick(CosmeticUtil.kickMessage(ViolationSource.Command));
         });
     }
 

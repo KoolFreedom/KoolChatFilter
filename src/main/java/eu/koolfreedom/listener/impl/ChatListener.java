@@ -35,11 +35,11 @@ public class ChatListener extends KoolListener {
             IdiotsList.get().save();
             IdiotsList.get().reload();
 
-            CosmeticUtil.staffAlert(player, ViolationSource.CHAT);
-            CosmeticUtil.discordAlert(player, ViolationSource.CHAT);
+            CosmeticUtil.staffAlert(player, ViolationSource.Chat);
+            CosmeticUtil.discordAlert(player, ViolationSource.Chat);
             CosmeticUtil.crashPlayer(player);
 
-            player.kick(CosmeticUtil.kickMessage(ViolationSource.CHAT));
+            player.kick(CosmeticUtil.kickMessage(ViolationSource.Chat));
         });
     }
 }

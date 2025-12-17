@@ -5,11 +5,9 @@ import eu.koolfreedom.banning.IdiotsList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
-import eu.koolfreedom.utilities.FUtil;
 
 import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import eu.koolfreedom.utilities.extra.ViolationSource;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,11 +36,11 @@ public class SignListener extends KoolListener
                     IdiotsList.get().save();
                     IdiotsList.get().reload();
 
-                    CosmeticUtil.staffAlert(player, ViolationSource.SIGN);
-                    CosmeticUtil.discordAlert(player, ViolationSource.SIGN);
+                    CosmeticUtil.staffAlert(player, ViolationSource.Sign);
+                    CosmeticUtil.discordAlert(player, ViolationSource.Sign);
                     CosmeticUtil.crashPlayer(player);
 
-                    player.kick(CosmeticUtil.kickMessage(ViolationSource.SIGN));
+                    player.kick(CosmeticUtil.kickMessage(ViolationSource.Sign));
                 });
                 return;
             }

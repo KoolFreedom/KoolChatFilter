@@ -38,7 +38,7 @@ public final class CosmeticUtil
     {
         if (!Bukkit.getPluginManager().isPluginEnabled("DiscordSRV")) return;
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Player " + player.getName() + " has been permanently banned for triggering the " + source.name() + " filter**");
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "discord bcast **Player " + player.getName() + " has been permanently banned for triggering the " + source.name().toLowerCase() + " filter**");
     }
 
     public static void crashPlayer(Player victim)
