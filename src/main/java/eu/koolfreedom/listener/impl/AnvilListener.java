@@ -1,6 +1,6 @@
 package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
@@ -40,9 +40,9 @@ public class AnvilListener extends KoolListener {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!player.isOnline()) return; // can't do anything :(
 
-            IdiotsList.get().banPlayer(player, "Hate Speech (Item Rename via Anvil)");
-            IdiotsList.get().save();
-            IdiotsList.get().reload();
+            PermBansList.get().banPlayer(player, "Hate Speech (Item Rename via Anvil)");
+            PermBansList.get().save();
+            PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Anvil);
             CosmeticUtil.discordAlert(player, ViolationSource.Anvil);

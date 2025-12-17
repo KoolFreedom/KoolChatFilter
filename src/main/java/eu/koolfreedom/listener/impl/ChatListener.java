@@ -1,6 +1,6 @@
 package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
@@ -31,9 +31,9 @@ public class ChatListener extends KoolListener {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!player.isOnline()) return;
 
-            IdiotsList.get().banPlayer(player, "Hate Speech");
-            IdiotsList.get().save();
-            IdiotsList.get().reload();
+            PermBansList.get().banPlayer(player, "Hate Speech");
+            PermBansList.get().save();
+            PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Chat);
             CosmeticUtil.discordAlert(player, ViolationSource.Chat);

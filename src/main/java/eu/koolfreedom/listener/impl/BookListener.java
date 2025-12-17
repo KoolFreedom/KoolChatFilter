@@ -1,7 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
@@ -31,9 +31,9 @@ public class BookListener extends KoolListener
                 {
                     if (!player.isOnline()) return;
 
-                    IdiotsList.get().banPlayer(player, "Hate Speech (Book Page)");
-                    IdiotsList.get().save();
-                    IdiotsList.get().reload();
+                    PermBansList.get().banPlayer(player, "Hate Speech (Book Page)");
+                    PermBansList.get().save();
+                    PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Book);
                     CosmeticUtil.discordAlert(player, ViolationSource.Book);

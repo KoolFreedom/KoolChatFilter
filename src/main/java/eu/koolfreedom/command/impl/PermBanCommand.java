@@ -1,6 +1,6 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -8,7 +8,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.util.List;
 
 @CommandParameters(
@@ -22,7 +21,7 @@ public class PermBanCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        IdiotsList indefBans = IdiotsList.get();
+        PermBansList indefBans = PermBansList.get();
         if (args.length == 0 || !sender.hasPermission("kfc.command.banlist.reload"))
         {
             msg(sender, "<gray>There are <count> idiots.",

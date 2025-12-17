@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class IdiotsList
+public class PermBansList
 {
-    private static IdiotsList instance;
+    private static PermBansList instance;
     private final File file;
     private final YamlConfiguration config;
     private final MiniMessage mm = MiniMessage.miniMessage();
 
-    private IdiotsList()
+    private PermBansList()
     {
         KoolChatFilter plugin = KoolChatFilter.getInstance();
         this.file = new File(plugin.getDataFolder(), "idiots.yml");
@@ -32,11 +32,11 @@ public class IdiotsList
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static IdiotsList get()
+    public static PermBansList get()
     {
         if (instance == null)
         {
-            instance = new IdiotsList();
+            instance = new PermBansList();
         }
         return instance;
     }

@@ -1,7 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
@@ -32,9 +32,9 @@ public class SignListener extends KoolListener
                 {
                     if (!player.isOnline()) return;
 
-                    IdiotsList.get().banPlayer(player, "Hate Speech (Sign)");
-                    IdiotsList.get().save();
-                    IdiotsList.get().reload();
+                    PermBansList.get().banPlayer(player, "Hate Speech (Sign)");
+                    PermBansList.get().save();
+                    PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Sign);
                     CosmeticUtil.discordAlert(player, ViolationSource.Sign);

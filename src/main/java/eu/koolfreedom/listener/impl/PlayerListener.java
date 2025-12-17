@@ -1,6 +1,6 @@
 package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
@@ -18,7 +18,7 @@ public class PlayerListener extends KoolListener
     public void onPermBannedPlayerLogin(PlayerLoginEvent event)
     {
         Player player = event.getPlayer();
-        IdiotsList idot = IdiotsList.get();
+        PermBansList idot = PermBansList.get();
 
         String currentName = player.getName().toLowerCase();
         String uuid = player.getUniqueId().toString();

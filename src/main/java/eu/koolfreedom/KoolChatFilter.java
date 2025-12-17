@@ -1,6 +1,6 @@
 package eu.koolfreedom;
 
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
 import eu.koolfreedom.filter.FilterEngine;
@@ -46,7 +46,7 @@ public class KoolChatFilter extends JavaPlugin
         FLog.info("Reloaded the Filter Engine");
 
         reloadBansConfig();
-        FLog.info("Loaded {} people in the idiot file", IdiotsList.get().getBansCount());
+        FLog.info("Loaded {} people in the idiot file", PermBansList.get().getBansCount());
 
         loadListeners();
         FLog.info("Loaded listeners");
@@ -56,7 +56,7 @@ public class KoolChatFilter extends JavaPlugin
     public void onDisable()
     {
         FLog.info("Disabled KoolChatFilter");
-        IdiotsList.get().save();
+        PermBansList.get().save();
     }
 
     private void loadListeners()
@@ -71,6 +71,6 @@ public class KoolChatFilter extends JavaPlugin
 
     private void reloadBansConfig()
     {
-        IdiotsList.get().reload();
+        PermBansList.get().reload();
     }
 }

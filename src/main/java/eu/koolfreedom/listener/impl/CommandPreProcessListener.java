@@ -1,7 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.KoolChatFilter;
-import eu.koolfreedom.banning.IdiotsList;
+import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
@@ -39,9 +39,9 @@ public class CommandPreProcessListener extends KoolListener
                 return; // do nothing... cause what else could you do
             }
 
-            IdiotsList.get().banPlayer(player, "Hate Speech (via Commands)");
-            IdiotsList.get().save();
-            IdiotsList.get().reload();
+            PermBansList.get().banPlayer(player, "Hate Speech (via Commands)");
+            PermBansList.get().save();
+            PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Command);
             CosmeticUtil.discordAlert(player, ViolationSource.Command);
