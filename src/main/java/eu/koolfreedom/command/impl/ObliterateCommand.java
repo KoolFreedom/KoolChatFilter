@@ -4,6 +4,7 @@ import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -64,6 +65,9 @@ public class ObliterateCommand extends KoolCommand
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
         Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () ->
                 PermBansList.get().banPlayer(target, "You've met with a terrible fate, haven't you? " + reason), 38);
+        Bukkit.getScheduler().runTaskLater(plugin, () ->
+                FUtil.staffAction(sender, "Permanently banning <target>",
+                        Placeholder.unparsed("target", target.getName())), 38);
         return true;
     }
 
