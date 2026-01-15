@@ -1,6 +1,5 @@
 package eu.koolfreedom.utilities.extra;
 
-import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.Component;

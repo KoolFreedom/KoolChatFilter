@@ -1,6 +1,5 @@
 package eu.koolfreedom.utilities;
 
-import eu.koolfreedom.config.ConfigEntry;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -15,9 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.Normalizer;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class FUtil
 {
