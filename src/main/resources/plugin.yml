@@ -6,10 +6,10 @@ author: gamingto12
 api-version: 1.21
 
 permissions:
-  kf.default:
+  kfc.default:
     children:
       - kfc.command.koolchatfilter
-  kf.admin:
+  kfc.admin:
     children:
       - kfc.command.crash
       - kfc.command.obliterate
