@@ -1,7 +1,7 @@
 name: KoolChatFilter
 main: eu.koolfreedom.KoolChatFilter
 loader: eu.koolfreedom.KoolLibraryManager
-version: 1.0
+version: '1.0'
 description: My best attempt at a chat filter plugin
 author: gamingto12
 api-version: 1.21.10
