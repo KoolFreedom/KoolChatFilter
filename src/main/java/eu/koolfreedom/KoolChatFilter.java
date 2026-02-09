@@ -8,6 +8,10 @@ import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -71,5 +75,21 @@ public class KoolChatFilter extends JavaPlugin
     private void reloadBansConfig()
     {
         PermBansList.get().reload();
+    }
+
+    public static void filterLogger(Component message)
+    {
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            if (!player.hasPermission("kfc.admin")) continue;
+
+            player.sendMessage(Component.newline()
+                    .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                    .append(Component.text("KoolFreedom | Chat Filter", NamedTextColor.RED))
+                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                    .append(message)
+                    .appendNewline());
+        }
+        FLog.info(message);
     }
 }

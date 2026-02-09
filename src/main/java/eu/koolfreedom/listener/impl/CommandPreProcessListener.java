@@ -5,8 +5,10 @@ import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
+import eu.koolfreedom.utilities.FUtil;
 import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import eu.koolfreedom.utilities.extra.ViolationSource;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,6 +46,9 @@ public class CommandPreProcessListener extends KoolListener
             PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Command);
+            KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for command: /<command>",
+                    Placeholder.unparsed("player", player.getName()),
+                    Placeholder.unparsed("command", content)));
             CosmeticUtil.discordAlert(player, ViolationSource.Command);
             CosmeticUtil.crashPlayer(player);
 

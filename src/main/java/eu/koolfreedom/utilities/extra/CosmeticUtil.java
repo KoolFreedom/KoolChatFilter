@@ -44,15 +44,6 @@ public final class CosmeticUtil
     {
         if (victim == null) return;
 
-        for (int i = 0; i < 3; i++)
-        {
-            Bukkit.dispatchCommand(
-                    Bukkit.getConsoleSender(),
-                    "execute as " + victim.getName()
-                            + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s"
-            );
-        }
-
         victim.spawnParticle(
                 Particle.ASH,
                 victim.getLocation(),

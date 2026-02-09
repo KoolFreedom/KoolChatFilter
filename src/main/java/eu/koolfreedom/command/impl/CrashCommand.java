@@ -2,8 +2,8 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
+import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class CrashCommand extends KoolCommand
             msg(sender, "<red>You shouldn't have done that.");
 
             if (playerSender != null) {
-                crashPlayer(playerSender);
+                CosmeticUtil.crashPlayer(playerSender);
             } else {
                 msg(sender, "<red>...but since you're console, you get to live.");
             }
@@ -34,7 +34,7 @@ public class CrashCommand extends KoolCommand
 
             if (player != null)
             {
-                crashPlayer(player);
+                CosmeticUtil.crashPlayer(player);
                 msg(sender, "<green>Your wish is my command.");
             }
             else
@@ -46,7 +46,7 @@ public class CrashCommand extends KoolCommand
                 else
                 {
                     msg(sender, "<red>We couldn't find that player, so we're going to do it to you instead :)");
-                    crashPlayer(playerSender);
+                    CosmeticUtil.crashPlayer(playerSender);
                 }
             }
         }
@@ -58,18 +58,5 @@ public class CrashCommand extends KoolCommand
     public List<String> tabComplete(CommandSender sender, Command command, String commandLabel, String[] args)
     {
         return args.length == 1 ? Bukkit.getOnlinePlayers().stream().map(Player::getName).toList() : List.of();
-    }
-
-    private void crashPlayer(Player victim)
-    {
-        if (victim == null)
-        {
-            return; // do nothing
-        }
-
-        for (int i = 0; i < 3; i++) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute as " + victim.getName() + " at @s run particle flame ~ ~ ~ 1 1 1 1 999999999 force @s");
-        }
-        victim.spawnParticle(Particle.ASH, victim.getLocation(), Integer.MAX_VALUE, 1, 1, 1, 1, null, true);
     }
 }

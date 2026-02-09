@@ -6,8 +6,10 @@ import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
 
+import eu.koolfreedom.utilities.FUtil;
 import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import eu.koolfreedom.utilities.extra.ViolationSource;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,6 +39,9 @@ public class SignListener extends KoolListener
                     PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Sign);
+                    KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for sign text: '<line>'",
+                            Placeholder.unparsed("player", player.getName()),
+                            Placeholder.unparsed("line", line)));
                     CosmeticUtil.discordAlert(player, ViolationSource.Sign);
                     CosmeticUtil.crashPlayer(player);
 

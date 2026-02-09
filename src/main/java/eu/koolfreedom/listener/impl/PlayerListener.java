@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "deprecation"})
 public class PlayerListener extends KoolListener
 {
     @EventHandler(priority = EventPriority.LOWEST)
@@ -77,7 +77,7 @@ public class PlayerListener extends KoolListener
 
         // Broadcasts to admins
         String playerName = event.getPlayer().getName();
-        FUtil.broadcast("kf.admin",
+        FUtil.broadcast("kfc.admin",
                 "<#ffb373><player><gray> tried joining, but they're on the idiots list.", Placeholder.unparsed("player", playerName));
     }
 }

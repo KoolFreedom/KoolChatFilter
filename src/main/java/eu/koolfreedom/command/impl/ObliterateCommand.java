@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> <reason>", aliases = {"doom"})
+@CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> <reason>", aliases = {"execute"})
 public class ObliterateCommand extends KoolCommand
 {
     @Override

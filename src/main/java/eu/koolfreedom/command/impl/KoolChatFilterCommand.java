@@ -21,7 +21,6 @@ import java.util.List;
         usage = "/<command> [reload]",
         aliases = {"kfc", "koolfilter"}
 )
-@SuppressWarnings("UnstableApiUsage")
 public class KoolChatFilterCommand extends KoolCommand
 {
     @Override

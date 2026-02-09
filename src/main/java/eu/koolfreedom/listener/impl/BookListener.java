@@ -6,8 +6,10 @@ import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.listener.KoolListener;
 
+import eu.koolfreedom.utilities.FUtil;
 import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import eu.koolfreedom.utilities.extra.ViolationSource;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,6 +38,9 @@ public class BookListener extends KoolListener
                     PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Book);
+                    KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been banned for book text: <text>",
+                            Placeholder.unparsed("player", player.getName()),
+                            Placeholder.unparsed("text", page)));
                     CosmeticUtil.discordAlert(player, ViolationSource.Book);
                     CosmeticUtil.crashPlayer(player);
 
