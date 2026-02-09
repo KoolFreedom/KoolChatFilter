@@ -10,9 +10,9 @@ permissions:
   kfc.default:
     children:
       - kfc.command.koolchatfilter
+      - kfc.command.permbans
   kfc.admin:
     children:
       - kfc.command.crash
       - kfc.command.obliterate
-      - kfc.command.permbans
       - kfc.command.reload

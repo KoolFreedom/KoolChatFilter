@@ -10,6 +10,7 @@ public class FLog
     private static final Logger logger = KoolChatFilter.getInstance().getSLF4JLogger();
     private static final ComponentLogger componentLogger = KoolChatFilter.getInstance().getComponentLogger();
 
+    // Logging level: INFO
     public static void info(String message)
     {
         logger.info(message);
@@ -25,6 +26,7 @@ public class FLog
         componentLogger.info(message);
     }
 
+    // Logging level: WARNING
     public static void warning(String message)
     {
         logger.warn(message);
@@ -50,6 +52,7 @@ public class FLog
         componentLogger.warn(message, ex);
     }
 
+    // Logging level: ERROR
     public static void error(String message)
     {
         logger.error(message);
@@ -73,5 +76,21 @@ public class FLog
     public static void error(Component message, Throwable ex)
     {
         componentLogger.error(message, ex);
+    }
+
+    // Debug logging
+    public static void debug(String message)
+    {
+       logger.debug(message);
+    }
+
+    public static void debug(String message, Object... args)
+    {
+        logger.debug(message, args);
+    }
+
+    public static void debug(Component message)
+    {
+        componentLogger.debug(message);
     }
 }

@@ -56,6 +56,7 @@ public class PermBansList
         try
         {
             config.load(file);
+            FLog.info("Loaded {} entries", getBansCount());
         } catch (Exception e)
         {
             FLog.error("Failed to reload permbans file!", e);
