@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,6 +21,12 @@ public class PermBansList
     private final File file;
     private final YamlConfiguration config;
     private final MiniMessage mm = MiniMessage.miniMessage();
+
+    // Configuration path constants for consistency and maintainability
+    private static final String UUID_KEY = "uuid";
+    private static final String IPS_KEY = "ips";
+    private static final String REASON_KEY = "reason";
+    private static final String DEFAULT_REASON = "You've met with a terrible fate, haven't you?";
 
     private PermBansList()
     {
@@ -69,43 +76,90 @@ public class PermBansList
     }
 
     // ======================================================
+    // Helper Methods
+    // ======================================================
+
+    /**
+     * Builds a configuration path for a ban entry key.
+     *
+     * @param name the player name (will be lowercased)
+     * @param subkey the subkey (uuid, ips, reason)
+     * @return the full configuration path
+     */
+    private String buildPath(String name, String subkey) {
+        return name.toLowerCase() + "." + subkey;
+    }
+
+    /**
+     * Gets the UUID stored for a banned player.
+     */
+    private Optional<String> getStoredUuid(String name) {
+        String uuid = config.getString(buildPath(name, UUID_KEY));
+        return Optional.ofNullable(uuid);
+    }
+
+    /**
+     * Gets the IPs associated with a banned entry (safe copy).
+     */
+    private List<String> getStoredIps(String name) {
+        List<String> ips = config.getStringList(buildPath(name, IPS_KEY));
+        return ips != null ? ips : Collections.emptyList();
+    }
+
+    // ======================================================
     // Ban Management
     // ======================================================
 
     public boolean isBanned(Player player) {
-        String ip = null;
-        if (player.getAddress() != null) {
-            ip = player.getAddress().getAddress().getHostAddress();
+        if (player == null) {
+            return false;
         }
 
-        return isNameBanned(player.getName())
-                || isUuidBanned(player.getUniqueId().toString())
+        String name = player.getName();
+        String uuid = player.getUniqueId().toString();
+        String ip = getPlayerIp(player);
+
+        return isNameBanned(name)
+                || isUuidBanned(uuid)
                 || (ip != null && isIpBanned(ip));
     }
 
-    public boolean isNameBanned(String name)
-    {
-        return config.contains(name.toLowerCase());
+    /**
+     * Safely extracts the player's IP address.
+     */
+    private String getPlayerIp(Player player) {
+        try {
+            return player.getAddress() != null ? player.getAddress().getAddress().getHostAddress() : null;
+        } catch (Exception e) {
+            FLog.warning("Failed to get IP for player {}", player.getName());
+            return null;
+        }
+    }
+
+    public boolean isNameBanned(String name) {
+        return name != null && config.contains(name.toLowerCase());
     }
 
     public boolean isUuidBanned(String uuid) {
-        for (String key : config.getKeys(false)) {
-            String stored = config.getString(key + ".uuid");
-            if (stored != null && stored.equalsIgnoreCase(uuid)) {
-                return true;
-            }
+        if (uuid == null || uuid.isEmpty()) {
+            return false;
         }
-        return false;
+
+        final String uuidLower = uuid.toLowerCase();
+        return config.getKeys(false).stream()
+                .anyMatch(key -> {
+                    String stored = getStoredUuid(key).orElse(null);
+                    return stored != null && stored.equalsIgnoreCase(uuidLower);
+                });
     }
 
     public boolean isIpBanned(String ip) {
-        for (String key : config.getKeys(false)) {
-            List<String> ips = config.getStringList(key + ".ips");
-            if (ips.contains(ip)) {
-                return true;
-            }
+        if (ip == null || ip.isEmpty()) {
+            return false;
         }
-        return false;
+
+        return config.getKeys(false).stream()
+                .anyMatch(key -> getStoredIps(key).contains(ip));
     }
 
     // ======================================================
@@ -113,7 +167,7 @@ public class PermBansList
     // ======================================================
 
     public String getReason(String name) {
-        return config.getString(name.toLowerCase() + ".reason", "You've met with a terrible fate, haven't you?");
+        return config.getString(buildPath(name, REASON_KEY), DEFAULT_REASON);
     }
 
     public Component getReasonComponent(String name) {
@@ -131,46 +185,118 @@ public class PermBansList
     // Ban / Unban
     // ======================================================
 
+    /**
+     * Bans a player by name, UUID, and IP address.
+     *
+     * @param player the player to ban
+     * @param reason the ban reason (null will use default)
+     * @throws IllegalArgumentException if player is null or has no valid IP
+     */
     public void banPlayer(Player player, String reason) {
+        Objects.requireNonNull(player, "Player cannot be null");
+
         String name = player.getName().toLowerCase();
         String uuid = player.getUniqueId().toString();
-        String ip = Objects.requireNonNull(player.getAddress()).getAddress().getHostAddress();
+        String ip = getPlayerIp(player);
 
-        config.set(name + ".uuid", uuid);
+        if (ip == null) {
+            throw new IllegalArgumentException("Cannot ban player without a valid IP address");
+        }
 
-        List<String> ips = config.getStringList(name + ".ips");
+        config.set(buildPath(name, UUID_KEY), uuid);
+
+        // Update IPs list (avoid adding duplicates)
+        List<String> ips = new java.util.ArrayList<>(getStoredIps(name));
         if (!ips.contains(ip)) {
             ips.add(ip);
+            config.set(buildPath(name, IPS_KEY), ips);
         }
-        config.set(name + ".ips", ips);
 
-        config.set(name + ".reason", reason != null ? reason : "No reason provided.");
+        config.set(buildPath(name, REASON_KEY), reason != null ? reason : DEFAULT_REASON);
         save();
     }
 
-    public void unbanPlayer(String name) {
+    /**
+     * Unbans a player by name.
+     *
+     * @param name the player name to unban
+     * @return true if the player was banned and successfully unbanned, false if not found
+     */
+    public boolean unbanPlayer(String name) {
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+
         name = name.toLowerCase();
         if (config.contains(name)) {
             config.set(name, null);
             save();
+            return true;
         }
+        return false;
     }
 
+    /**
+     * Unbans a player by UUID.
+     *
+     * @param uuid the player UUID to unban
+     * @return true if the player was found and unbanned, false otherwise
+     */
+    public boolean unbanPlayerByUuid(String uuid) {
+        Optional<String> bannedName = findBannedNameByUuid(uuid);
+        if (bannedName.isPresent()) {
+            return unbanPlayer(bannedName.get());
+        }
+        return false;
+    }
+
+    /**
+     * Unbans a player by IP address.
+     *
+     * @param ip the player IP to unban
+     * @return true if the player was found and unbanned, false otherwise
+     */
+    public boolean unbanPlayerByIp(String ip) {
+        Optional<String> bannedName = findBannedNameByIp(ip);
+        if (bannedName.isPresent()) {
+            return unbanPlayer(bannedName.get());
+        }
+        return false;
+    }
+
+    /**
+     * Finds a banned player by IP address.
+     *
+     * @param ip the IP address to search for
+     * @return an Optional containing the banned name if found
+     */
     public Optional<String> findBannedNameByIp(String ip) {
-        for (String key : config.getKeys(false)) {
-            if (config.getStringList(key + ".ips").contains(ip)) {
-                return Optional.of(key);
-            }
+        if (ip == null || ip.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        return config.getKeys(false).stream()
+                .filter(key -> getStoredIps(key).contains(ip))
+                .findFirst();
     }
 
+    /**
+     * Finds a banned player by UUID.
+     *
+     * @param uuid the UUID to search for
+     * @return an Optional containing the banned name if found
+     */
     public Optional<String> findBannedNameByUuid(String uuid) {
-        for (String key : config.getKeys(false)) {
-            if (uuid.equalsIgnoreCase(config.getString(key + ".uuid"))) {
-                return Optional.of(key);
-            }
+        if (uuid == null || uuid.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        final String uuidLower = uuid.toLowerCase();
+        return config.getKeys(false).stream()
+                .filter(key -> {
+                    String stored = getStoredUuid(key).orElse(null);
+                    return stored != null && stored.equalsIgnoreCase(uuidLower);
+                })
+                .findFirst();
     }
 }
