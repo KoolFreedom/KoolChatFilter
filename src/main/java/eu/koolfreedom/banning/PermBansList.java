@@ -101,6 +101,7 @@ public class PermBansList
     /**
      * Gets the IPs associated with a banned entry (safe copy).
      */
+    @SuppressWarnings("ConstantConditions")
     private List<String> getStoredIps(String name) {
         List<String> ips = config.getStringList(buildPath(name, IPS_KEY));
         return ips != null ? ips : Collections.emptyList();
@@ -244,10 +245,7 @@ public class PermBansList
      */
     public boolean unbanPlayerByUuid(String uuid) {
         Optional<String> bannedName = findBannedNameByUuid(uuid);
-        if (bannedName.isPresent()) {
-            return unbanPlayer(bannedName.get());
-        }
-        return false;
+        return bannedName.filter(this::unbanPlayer).isPresent();
     }
 
     /**
@@ -258,10 +256,7 @@ public class PermBansList
      */
     public boolean unbanPlayerByIp(String ip) {
         Optional<String> bannedName = findBannedNameByIp(ip);
-        if (bannedName.isPresent()) {
-            return unbanPlayer(bannedName.get());
-        }
-        return false;
+        return bannedName.filter(this::unbanPlayer).isPresent();
     }
 
     /**
