@@ -56,23 +56,28 @@ dependencies {
 tasks {
     // Update build.properties with build information
     processResources {
-        val buildAuthor = project.findProperty("buildAuthor") ?: "KoolFreedom"
+        val buildAuthor = project.findProperty("buildAuthor")?.toString() ?: "KoolFreedom"
         val buildNumber = getBuildNumber()
         val buildDate = SimpleDateFormat("M/dd/yyyy 'at' h:mm:ss aa zzz").format(Date())
 
-        inputs.property("buildAuthor", buildAuthor)
-        inputs.property("buildNumber", buildNumber)
-        inputs.property("buildVersion", project.version)
-        inputs.property("buildDate", buildDate)
-
-        filesMatching("build.properties") {
-            expand(mapOf(
+        inputs.properties(
+            mapOf(
                 "buildAuthor" to buildAuthor,
                 "buildNumber" to buildNumber,
                 "buildVersion" to project.version,
                 "buildDate" to buildDate
-            ))
+            )
+        )
+
+        filesMatching("build.properties") {
+            expand(
+                "buildAuthor" to buildAuthor,
+                "buildNumber" to buildNumber,
+                "buildVersion" to project.version,
+                "buildDate" to buildDate
+            )
         }
+
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
@@ -93,54 +98,8 @@ tasks {
     }
 }
 
-/**
- * Read the current build number from build.properties and increment it.
- * If the file doesn't exist or the property isn't found, returns 1.
- */
 fun getBuildNumber(): Int {
-    val buildPropsFile = file("src/main/resources/build.properties")
-    if (!buildPropsFile.exists()) {
-        return 1
-    }
-
-    val props = mutableMapOf<String, String>()
-    buildPropsFile.readLines().forEach { line ->
-        if (line.isNotEmpty() && !line.startsWith("#")) {
-            val (key, value) = line.split("=", limit = 2).let { parts ->
-                if (parts.size == 2) parts[0] to parts[1] else return@forEach
-            }
-            props[key.trim()] = value.trim()
-        }
-    }
-    val currentNumber = (props["buildNumber"] ?: "0").toIntOrNull() ?: 0
-    return currentNumber + 1
-}
-
-/**
- * Task to increment build number in build.properties
- */
-tasks.register("incrementBuildNumber") {
-    doLast {
-        val buildPropsFile = file("src/main/resources/build.properties")
-        buildPropsFile.parentFile.mkdirs()
-
-        val props = mutableMapOf<String, String>()
-        if (buildPropsFile.exists()) {
-            buildPropsFile.readLines().forEach { line ->
-                if (line.isNotEmpty() && !line.startsWith("#")) {
-                    val (key, value) = line.split("=", limit = 2).let { parts ->
-                        if (parts.size == 2) parts[0] to parts[1] else return@forEach
-                    }
-                    props[key.trim()] = value.trim()
-                }
-            }
-        }
-
-        val currentNumber = (props["buildNumber"] ?: "0").toIntOrNull() ?: 0
-        props["buildNumber"] = (currentNumber + 1).toString()
-        props["buildVersion"] = project.version.toString()
-        props["buildDate"] = System.currentTimeMillis().toString()
-
-        buildPropsFile.writeText(props.entries.joinToString("\n") { (k, v) -> "$k=$v" })
-    }
+    val current = (project.findProperty("buildNumber")?.toString()?.toIntOrNull() ?: 0)
+    project.extensions.extraProperties["buildNumber"] = current + 1
+    return current + 1
 }
