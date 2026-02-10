@@ -1,6 +1,6 @@
 # KoolChatFilter Indefinite Bans File
 #
-# This serves as the only method of banning people from KoolChatFilter.
+# This serves as the only method of banning people via KoolChatFilter.
 # This hooks into the ChatListener's slur filter, automatically adding online users to this file.
 # Reasons support both MiniMessage and legacy chat formats, to learn more about MiniMessage, see https://webui.advntr.dev/
 badplayer1:

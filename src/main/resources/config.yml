@@ -1,5 +1,13 @@
+#
+# KoolChatFilter v1.0 Configuration File
+#
+
+
+# The link to the server owner's Discord server / forum page that holds ban appeals
 ban_url: "https://discord.gg/MTYrSgVkmd"
 
+# The list of words/phrases to filter.
+# It is recommended to add duplicates of words in the case of accented letters.
 filtered-stuff:
   - "nigger"
   - "nigga"
