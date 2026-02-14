@@ -6,6 +6,10 @@
 # The link to the server owner's Discord server / forum page that holds ban appeals
 ban_url: "https://discord.gg/MTYrSgVkmd"
 
+# Enable debug mode?
+# All debug mode will do is add extra logging if there is a FLog.debug() call to any function
+debug-mode: false
+
 # The list of words/phrases to filter.
 # It is recommended to add duplicates of words in the case of accented letters.
 filtered-stuff:

@@ -60,6 +60,7 @@ public class PermBanCommand extends KoolCommand
                     {
                         msg(sender, "<green>Unbanned player: <player>",
                                 Placeholder.unparsed("player", value));
+                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
                     }
                     else
                     {
@@ -74,6 +75,7 @@ public class PermBanCommand extends KoolCommand
                     {
                         msg(sender, "<green>Unbanned player by UUID: <uuid>",
                                 Placeholder.unparsed("uuid", value));
+                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
                     }
                     else
                     {
@@ -88,6 +90,7 @@ public class PermBanCommand extends KoolCommand
                     {
                         msg(sender, "<green>Unbanned player by IP: <ip>",
                                 Placeholder.unparsed("ip", value));
+                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
                     }
                     else
                     {
@@ -102,7 +105,7 @@ public class PermBanCommand extends KoolCommand
             }
             catch (Exception e)
             {
-                FLog.debug("Error unbanning player", e);
+                FLog.error("Error unbanning player", e);
                 msg(sender, "<red>An error occurred while unbanning the player.");
             }
         }

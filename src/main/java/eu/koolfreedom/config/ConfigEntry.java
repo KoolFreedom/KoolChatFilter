@@ -9,6 +9,7 @@ import java.util.List;
 public enum ConfigEntry
 {
     FILTER(List.class, "filtered-stuff"),
+    DEBUG_MODE(Boolean.class, "debug-mode"),
     BAN_URL(String.class, "ban_url");
     //
     private final Class<?> type;
