@@ -65,7 +65,7 @@ public class PlayerListener extends KoolListener
 
         // Broadcasts to admins
         FUtil.broadcast("kfc.admin",
-                "<#ffb373><player><gray> tried joining, but they're on the idiots list.",
+                "<#ffb373><player><gray> tried joining, but they're indefinitely banned!",
                 Placeholder.unparsed("player", event.getName())
         );
     }

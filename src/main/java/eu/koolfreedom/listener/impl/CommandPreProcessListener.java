@@ -46,7 +46,7 @@ public class CommandPreProcessListener extends KoolListener
             PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Command);
-            KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for command: /<command>",
+            logFilteredMessage(FUtil.miniMessage("<red>Player <player> has been permanently banned for command: /<command>",
                     Placeholder.unparsed("player", player.getName()),
                     Placeholder.unparsed("command", content)));
             CosmeticUtil.discordAlert(player, ViolationSource.Command);
