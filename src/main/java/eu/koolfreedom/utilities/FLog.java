@@ -1,6 +1,7 @@
 package eu.koolfreedom.utilities;
 
 import eu.koolfreedom.KoolChatFilter;
+import eu.koolfreedom.config.ConfigEntry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.slf4j.Logger;
@@ -79,18 +80,11 @@ public class FLog
     }
 
     // Debug logging
-    public static void debug(String message)
-    {
-       logger.debug(message);
-    }
-
     public static void debug(String message, Object... args)
     {
-        logger.debug(message, args);
-    }
-
-    public static void debug(Component message)
-    {
-        componentLogger.debug(message);
+        if (ConfigEntry.DEBUG_MODE.getBoolean())
+        {
+            logger.debug(message, args);
+        }
     }
 }
