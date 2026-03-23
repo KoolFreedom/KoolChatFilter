@@ -1,7 +1,16 @@
 # KoolChatFilter
 
-Plugin made to catch a configurable list of words and add that player to a YAML file, preventing them from joining.
+This plugin is a simple chat filter plugin that has a configurable blocked terms list.
 
-Basically saying "screw you" to the player for saying a slur and banning them.
+These are the things that the plugin looks at:
+* Anvil (Item renaming)
+* Commands
+* Sign text
+* Book text (After clicking "Done" or "Sign")
+* and of course, chat messages.
+
+# Building/Compiling
+
+You need Gradle to build.
 
 ## If you are using KoolSMPCore, you do not need this plugin. These are for the people that don't like KoolSMPCore yet still would like a chat filtering system.
