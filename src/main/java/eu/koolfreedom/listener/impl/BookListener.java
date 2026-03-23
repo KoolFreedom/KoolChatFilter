@@ -38,7 +38,7 @@ public class BookListener extends KoolListener
                     PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Book);
-                    KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been banned for book text: <text>",
+                    logFilteredMessage(FUtil.miniMessage("<red>Player <player> has been banned for book text: <text>",
                             Placeholder.unparsed("player", player.getName()),
                             Placeholder.unparsed("text", page)));
                     CosmeticUtil.discordAlert(player, ViolationSource.Book);

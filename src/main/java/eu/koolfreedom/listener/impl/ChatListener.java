@@ -39,7 +39,7 @@ public class ChatListener extends KoolListener {
             PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Chat);
-            KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for saying: '<word>'",
+            logFilteredMessage(FUtil.miniMessage("<red>Player <player> has been permanently banned for saying: '<word>'",
                     Placeholder.unparsed("player", player.getName()),
                     Placeholder.unparsed("word", rawMessage)));
             CosmeticUtil.discordAlert(player, ViolationSource.Chat);

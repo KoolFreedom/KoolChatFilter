@@ -1,6 +1,5 @@
 package eu.koolfreedom.listener.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.filter.FilterEngine;
 import eu.koolfreedom.filter.FilterResult;
@@ -48,7 +47,7 @@ public class AnvilListener extends KoolListener {
             PermBansList.get().reload();
 
             CosmeticUtil.staffAlert(player, ViolationSource.Anvil);
-            KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for renaming their item to <message>",
+            logFilteredMessage(FUtil.miniMessage("<red>Player <player> has been permanently banned for renaming their item to <message>",
                     Placeholder.unparsed("player", player.getName()),
                     Placeholder.unparsed("message", name)));
             CosmeticUtil.discordAlert(player, ViolationSource.Anvil);

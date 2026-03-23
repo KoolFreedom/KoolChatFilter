@@ -39,7 +39,7 @@ public class SignListener extends KoolListener
                     PermBansList.get().reload();
 
                     CosmeticUtil.staffAlert(player, ViolationSource.Sign);
-                    KoolChatFilter.filterLogger(FUtil.miniMessage("<red>Player <player> has been permanently banned for sign text: '<line>'",
+                    logFilteredMessage(FUtil.miniMessage("<red>Player <player> has been permanently banned for sign text: '<line>'",
                             Placeholder.unparsed("player", player.getName()),
                             Placeholder.unparsed("line", line)));
                     CosmeticUtil.discordAlert(player, ViolationSource.Sign);

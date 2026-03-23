@@ -17,7 +17,7 @@ import java.util.List;
         name = "permbans",
         description = "Removes or reloads the idiots file",
         usage = "/<command> [reload|remove <type> <value>]",
-        aliases = {"idiotslist", "indefbans", "idiots", "indefban"}
+        aliases = {"indefbans", "indefban", "permban"}
 )
 public class PermBanCommand extends KoolCommand
 {

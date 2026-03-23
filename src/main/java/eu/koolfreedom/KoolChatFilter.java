@@ -75,20 +75,4 @@ public class KoolChatFilter extends JavaPlugin
     {
         PermBansList.get().reload();
     }
-
-    public static void filterLogger(Component message)
-    {
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-            if (!player.hasPermission("kfc.admin")) continue;
-
-            player.sendMessage(Component.newline()
-                    .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                    .append(Component.text("KoolFreedom | Chat Filter", NamedTextColor.RED))
-                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                    .append(message)
-                    .appendNewline());
-        }
-        FLog.info(message);
-    }
 }
