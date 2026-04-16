@@ -35,7 +35,7 @@ paper {
     loader = "eu.koolfreedom.KoolLibraryManager"
     website = "https://github.com/KoolFreedom"
     authors = listOf("gamingto12")
-    apiVersion = "1.21.10"
+    apiVersion = "1.21"
     generateLibrariesJson = true
 }
 

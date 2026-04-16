@@ -27,7 +27,7 @@ public class PermBanCommand extends KoolCommand
         PermBansList indefBans = PermBansList.get();
         if (args.length == 0 || !sender.hasPermission("kfc.admin"))
         {
-            msg(sender, "<gray>There are <count> idiots.",
+            msg(sender, "<gray>There are <count> permbans.",
                     Placeholder.unparsed("count", String.valueOf(indefBans.getBansCount())));
             return true;
         }
@@ -35,7 +35,7 @@ public class PermBanCommand extends KoolCommand
         if (args[0].equalsIgnoreCase("reload"))
         {
             indefBans.reload();
-            msg(sender, "<green>Reloaded the idiots file");
+            msg(sender, "<green>Reloaded the permbans file");
             return true;
         }
 

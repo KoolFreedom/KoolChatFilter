@@ -8,10 +8,6 @@ import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -24,7 +20,7 @@ public class KoolChatFilter extends JavaPlugin
     public ChatListener chatListener;
     public PlayerListener playerListener;
     public AnvilListener anvilListener;
-    public BookListener bookListener;
+    //public BookListener bookListener;
     public SignListener signListener;
     public CommandPreProcessListener commandPreProcessListener;
 
@@ -66,7 +62,7 @@ public class KoolChatFilter extends JavaPlugin
         chatListener = new ChatListener();
         playerListener = new PlayerListener();
         anvilListener = new AnvilListener();
-        bookListener = new BookListener();
+    //    bookListener = new BookListener();
         commandPreProcessListener = new CommandPreProcessListener();
         signListener = new SignListener();
     }
