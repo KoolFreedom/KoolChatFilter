@@ -1,22 +1,15 @@
-import net.minecrell.pluginyml.paper.PaperPluginDescription
 import java.util.*
 import java.text.SimpleDateFormat
 
 plugins {
     id("java")
-    id("maven-publish")
     id("net.kyori.blossom") version "2.2.0"
     id("com.gradleup.shadow") version ("9.3.1")
-    id("de.eldoria.plugin-yml.paper") version ("0.8.0")
 }
-
-group = "eu.koolfreedom"
-version = "2.0"
-description = "KoolChatFilter"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -27,21 +20,9 @@ repositories {
     maven("https://repo.codemc.io/repository/maven-snapshots/")
 }
 
-paper {
-    name = rootProject.name.toString()
-    version = project.version.toString()
-    description = "Random chat filter plugin"
-    main = "eu.koolfreedom.KoolChatFilter"
-    loader = "eu.koolfreedom.KoolLibraryManager"
-    website = "https://github.com/KoolFreedom"
-    authors = listOf("gamingto12")
-    apiVersion = "1.21"
-    generateLibrariesJson = true
-}
-
 dependencies {
     // Paper API
-    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
 
     // Utilities
     implementation("org.apache.commons:commons-lang3:3.18.0")
@@ -86,6 +67,8 @@ tasks {
 
         mergeServiceFiles()
         relocate("com.google.gson", "eu.koolfreedom.libs.gson")
+        relocate("org.reflections", "eu.koolfreedom.libs.reflections")
+        relocate("javassist", "eu.koolfreedom.libs.javassist")
     }
 
     build {
@@ -120,6 +103,7 @@ fun getBuildNumber(): Int {
  * Task to increment build number in build.properties
  */
 tasks.register("incrementBuildNumber") {
+    description = ""
     doLast {
         val buildPropsFile = file("src/main/resources/build.properties")
         buildPropsFile.parentFile.mkdirs()
