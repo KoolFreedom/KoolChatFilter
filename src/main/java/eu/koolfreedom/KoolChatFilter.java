@@ -3,7 +3,8 @@ package eu.koolfreedom;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
-import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.listener.impl.FilterListener;
+import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
@@ -17,12 +18,9 @@ public class KoolChatFilter extends JavaPlugin
     private static KoolChatFilter instance;
     private BuildProperties buildMeta;
     private CommandLoader commandLoader;
-    public ChatListener chatListener;
-    public PlayerListener playerListener;
-    public AnvilListener anvilListener;
-    //public BookListener bookListener;
-    public SignListener signListener;
-    public CommandPreProcessListener commandPreProcessListener;
+    private PlayerListener playerListener;
+    private FilterService filterService;
+    private FilterListener filterListener;
 
     @Override
     public void onLoad()
@@ -42,7 +40,8 @@ public class KoolChatFilter extends JavaPlugin
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands,", commandLoader.getKoolCommands().size());
 
-        FilterEngine.reload();
+        filterService = new FilterService();
+        FilterService.reload();
 
         reloadBansConfig();
 
@@ -59,12 +58,8 @@ public class KoolChatFilter extends JavaPlugin
 
     private void loadListeners()
     {
-        chatListener = new ChatListener();
         playerListener = new PlayerListener();
-        anvilListener = new AnvilListener();
-    //    bookListener = new BookListener();
-        commandPreProcessListener = new CommandPreProcessListener();
-        signListener = new SignListener();
+        filterListener = new FilterListener(filterService);
     }
 
     private void reloadBansConfig()

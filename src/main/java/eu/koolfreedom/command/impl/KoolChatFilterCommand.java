@@ -3,7 +3,7 @@ package eu.koolfreedom.command.impl;
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
-import eu.koolfreedom.filter.FilterEngine;
+import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -45,7 +45,7 @@ public class KoolChatFilterCommand extends KoolCommand
             try
             {
                 KoolChatFilter.getInstance().reloadConfig();
-                FilterEngine.reload();
+                FilterService.reload();
                 msg(sender, "<#a6da95>Configuration successfully reloaded");
             }
             catch (Exception e)

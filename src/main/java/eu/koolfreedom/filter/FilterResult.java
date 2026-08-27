@@ -1,8 +1,6 @@
 package eu.koolfreedom.filter;
 
-import org.jetbrains.annotations.Nullable;
-
-public record FilterResult(boolean matched, @Nullable String matchedRule)
+public record FilterResult(boolean matched, String expression)
 {
     public static FilterResult noMatch()
     {

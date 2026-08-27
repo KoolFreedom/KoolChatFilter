@@ -31,10 +31,10 @@ public class PermBansList
     private PermBansList()
     {
         KoolChatFilter plugin = KoolChatFilter.getInstance();
-        this.file = new File(plugin.getDataFolder(), "idiots.yml");
+        this.file = new File(plugin.getDataFolder(), "bans.yml");
         if (!file.exists())
         {
-            plugin.saveResource("idiots.yml", false);
+            plugin.saveResource("bans.yml", false);
         }
         this.config = YamlConfiguration.loadConfiguration(file);
     }

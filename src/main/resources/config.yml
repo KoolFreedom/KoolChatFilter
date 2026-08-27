@@ -12,16 +12,11 @@ debug-mode: false
 
 # The list of words/phrases to filter.
 # It is recommended to add duplicates of words in the case of accented letters.
-blocked-terms:
-  - "nigger"
-  - "nigga"
-  - "faggot"
-  - "tranny"
-  - "kike"
-  - "jigaboo"
-  - "polack"
-  - "heil hitler"
-  - "sieg heil"
-  - "nіggеr"
-  - "ոіggеr"
-  - "white power"
+filter:
+  rules:
+    - '(?i)n[\W_]*[i1!|l][\W_]*g[\W_]*g[\W_]*[ae][\W_]*(r|r+h+|h+)?s?'
+    - "(?i)f[a4]g+([o0]t)?"
+    - "(?i)heil hitler"
+    - "(?i)seig heil"
+    - "(?i)tran{2,}y"
+    - "(?i)tro{2,}n"

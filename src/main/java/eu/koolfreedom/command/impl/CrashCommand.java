@@ -2,7 +2,7 @@ package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.command.KoolCommand;
-import eu.koolfreedom.utilities.extra.CosmeticUtil;
+import eu.koolfreedom.filter.FilterService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,7 +22,7 @@ public class CrashCommand extends KoolCommand
             msg(sender, "<red>You shouldn't have done that.");
 
             if (playerSender != null) {
-                CosmeticUtil.crashPlayer(playerSender);
+                FilterService.crashPlayer(playerSender);
             } else {
                 msg(sender, "<red>...but since you're console, you get to live.");
             }
@@ -34,7 +34,7 @@ public class CrashCommand extends KoolCommand
 
             if (player != null)
             {
-                CosmeticUtil.crashPlayer(player);
+                FilterService.crashPlayer(player);
                 msg(sender, "<green>Your wish is my command.");
             }
             else
@@ -46,7 +46,7 @@ public class CrashCommand extends KoolCommand
                 else
                 {
                     msg(sender, "<red>We couldn't find that player, so we're going to do it to you instead :)");
-                    CosmeticUtil.crashPlayer(playerSender);
+                    FilterService.crashPlayer(playerSender);
                 }
             }
         }

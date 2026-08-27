@@ -4,8 +4,8 @@ import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.utilities.FUtil;
-import eu.koolfreedom.utilities.extra.CosmeticUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -42,7 +42,7 @@ public class ObliterateCommand extends KoolCommand
         target.setFireTicks(200);
         target.setGameMode(GameMode.ADVENTURE);
 
-        broadcast("<red><sender> is swinging the Russian Hammer over <target>!",
+        broadcast("<red><sender> is unleashing divine punishment upon <target>!",
                 Placeholder.unparsed("sender", sender.getName()),
                 Placeholder.unparsed("target", target.getName()));
 
@@ -60,7 +60,7 @@ public class ObliterateCommand extends KoolCommand
         Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> broadcast("<red><target> has been eradicated from existence!",
                 Placeholder.unparsed("target", target.getName())), 30);
 
-        CosmeticUtil.crashPlayer(target);
+        FilterService.crashPlayer(target);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
         Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () ->
