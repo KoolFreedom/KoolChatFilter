@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public enum ConfigEntry
 {
-    FILTER(List.class, "blocked-terms"),
+    FILTER(List.class, "filter.rules"),
     DEBUG_MODE(Boolean.class, "debug-mode"),
     BAN_URL(String.class, "ban_url");
     //

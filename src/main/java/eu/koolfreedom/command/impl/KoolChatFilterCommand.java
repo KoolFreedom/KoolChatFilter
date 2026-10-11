@@ -1,8 +1,8 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
+import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
@@ -44,7 +44,7 @@ public class KoolChatFilterCommand extends KoolCommand
         {
             try
             {
-                KoolChatFilter.getInstance().reloadConfig();
+                MainConfig.load();
                 FilterService.reload();
                 msg(sender, "<#a6da95>Configuration successfully reloaded");
             }

@@ -130,7 +130,7 @@ public final class FilterListener extends KoolListener
 
             FilterService.crashPlayer(player);
 
-            FLog.info("Filter matched {0} for {1} in {2}: {3}",
+            FLog.info("Filter matched {} for {} in {}: {}",
                     result.expression(), player.getName(), source.name(), content);
             FUtil.staffAction(Bukkit.getConsoleSender(), "<source> filter triggered by <player> | Player has been permanently banned.",
                     Placeholder.unparsed("source", source.name()),

@@ -1,6 +1,6 @@
 package eu.koolfreedom.filter;
 
-import eu.koolfreedom.KoolChatFilter;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
@@ -24,7 +24,7 @@ public final class FilterService
     {
         List<FilterRule> loadedRules = new ArrayList<>();
 
-        for (String expression : KoolChatFilter.getInstance().getConfig().getStringList("filter.rules"))
+        for (String expression : ConfigEntry.FILTER.getStringList())
         {
             if (expression == null || expression.isBlank()) continue;
 

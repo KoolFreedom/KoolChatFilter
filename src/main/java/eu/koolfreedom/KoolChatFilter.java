@@ -3,6 +3,7 @@ package eu.koolfreedom;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.CommandLoader;
 import eu.koolfreedom.command.impl.CrashCommand;
+import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.listener.impl.FilterListener;
 import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.listener.impl.*;
@@ -35,6 +36,9 @@ public class KoolChatFilter extends JavaPlugin
         FLog.info("Created by gamingto12");
         FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
         FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
+
+        MainConfig.load();
+        FLog.info("Loaded main configuration");
 
         commandLoader = new CommandLoader(CrashCommand.class);
         commandLoader.loadCommands();
