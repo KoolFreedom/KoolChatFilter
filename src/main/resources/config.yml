@@ -1,22 +1,41 @@
 #
-# KoolChatFilter v1.0 Configuration File
+# KoolChatFilter configuration
 #
 
+# Appeal link shown to players denied login for a local ban.
+ban_url: "Your url/forum here"
 
-# The link to the server owner's Discord server / forum page that holds ban appeals
-ban_url: "https://discord.gg/MTYrSgVkmd"
-
-# Enable debug mode?
-# All debug mode will do is add extra logging if there is a FLog.debug() call to any function
+# Enables additional messages at explicit debug log call sites.
 debug-mode: false
 
-# The list of words/phrases to filter.
-# It is recommended to add duplicates of words in the case of accented letters.
+# List of regular expressions. Matching is case-insensitive; accents and
+# zero-width formatting characters are normalized before matching.
+# Invalid expressions are logged and skipped. Patterns match any substring.
 filter:
-  rules:
-    - '(?i)n[\W_]*[i1!|l][\W_]*g[\W_]*g[\W_]*[ae][\W_]*(r|r+h+|h+)?s?'
-    - "(?i)f[a4]g+([o0]t)?"
-    - "(?i)heil hitler"
-    - "(?i)seig heil"
-    - "(?i)tran{2,}y"
-    - "(?i)tro{2,}n"
+  # Reason stored for local punishments and supplied to external commands.
+  reason: "Use of prohibited language"
+  # The list of filtered words, phrases, or patterns. Each entry is a regular expression.
+  # Example: "badword" or "badword|anotherbadword" or "(?i)badword" or "(?i)badword|anotherbadword"
+  rules: []
+
+  # Action taken for each matching filter rule:
+  # PERMANENT_BAN, TEMPORARY_BAN, MUTE, KICK, WARNING, or LOG_ONLY.
+  punishment: PERMANENT_BAN
+
+  # Positive integer plus s (seconds), m (minutes), h (hours), or d (days).
+  # Applies to TEMPORARY_BAN and MUTE only.
+  punishment-duration: 7d
+
+  # Optional external punishment-plugin commands. Commands run as console.
+  # Supported placeholders: {player}, {uuid}, {ip}, {reason}, {duration}.
+  # Configure commands to match the plugin installed on this server.
+  # Leave a command empty to store/enforce that punishment via KoolChatFilter.
+  external-commands:
+    # Used for PERMANENT_BAN.
+    ban: ""
+    # Used for TEMPORARY_BAN.
+    tempban: ""
+    # Used for MUTE.
+    mute: ""
+    # Used by /permbans remove ... when removing by name, UUID, or IP.
+    unban: ""

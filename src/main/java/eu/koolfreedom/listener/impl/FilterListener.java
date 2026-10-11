@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.banning.PermBansList;
+import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.filter.FilterSource;
@@ -29,6 +30,7 @@ public final class FilterListener extends KoolListener
     // This is a set of players who have been punished for chat messages,
     // to prevent multiple punishments for the same message.
     private final Set<UUID> chatPunishments = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> muteNotices = ConcurrentHashMap.newKeySet();
 
     public FilterListener(FilterService service)
     {
@@ -38,6 +40,11 @@ public final class FilterListener extends KoolListener
     @EventHandler
     public void onChat(AsyncChatEvent event)
     {
+        if (rejectMutedChat(event.getPlayer())) {
+            event.setCancelled(true);
+            return;
+        }
+
         String message = FUtil.plainText(event.message());
         FilterResult result = service.check(message);
         if (!result.matched()) return;
@@ -53,6 +60,11 @@ public final class FilterListener extends KoolListener
     @EventHandler @SuppressWarnings("deprecation")
     public void onLegacyChat(AsyncPlayerChatEvent event)
     {
+        if (rejectMutedChat(event.getPlayer())) {
+            event.setCancelled(true);
+            return;
+        }
+
         String message = event.getMessage();
         FilterResult result = service.check(message);
         if (!result.matched()) return;
@@ -123,26 +135,58 @@ public final class FilterListener extends KoolListener
         {
             if (!player.isOnline()) return;
 
-            String reason = "Hate Speech (" + source.name() + ")";
-            PermBansList.get().banPlayer(player, reason);
-            PermBansList.get().save();
-            PermBansList.get().reload();
-
-            FilterService.crashPlayer(player);
+            String reason = ConfigEntry.FILTER_REASON.getString();
+            PermBansList banList = PermBansList.get();
+            PermBansList.PunishmentType punishment = banList.getConfiguredPunishment();
+            long duration = banList.getConfiguredDurationMillis();
+            if (!banList.applyPunishment(player, reason, punishment, duration))
+            {
+                FLog.error("Could not apply configured {} punishment to {}", punishment, player.getName());
+                return;
+            }
 
             FLog.info("Filter matched {} for {} in {}: {}",
                     result.expression(), player.getName(), source.name(), content);
-            FUtil.staffAction(Bukkit.getConsoleSender(), "<source> filter triggered by <player> | Player has been permanently banned.",
+            FUtil.staffAction(Bukkit.getConsoleSender(), "<source> filter triggered by <player> | Punishment: <punishment>.",
                     Placeholder.unparsed("source", source.name()),
-                    Placeholder.unparsed("player", player.getName()));
+                    Placeholder.unparsed("player", player.getName()),
+                    Placeholder.unparsed("punishment", punishment.name()));
             FUtil.broadcast("kfc.admin",
-                    "<source> filter matched <rule> for <player>: <content>",
+                    "<source> filter matched <rule> for <player> (<punishment>): <content>",
                     Placeholder.unparsed("source", source.name()),
                     Placeholder.unparsed("rule", result.expression()),
                     Placeholder.unparsed("player", player.getName()),
+                    Placeholder.unparsed("punishment", punishment.name()),
                     Placeholder.unparsed("content", content));
-            player.kick(FUtil.miniMessage("<dark_red>Prohibited language detected.</dark_red>"));
+
+            switch (punishment)
+            {
+                case PERMANENT_BAN, TEMPORARY_BAN, KICK ->
+                        player.kick(FUtil.miniMessage("<dark_red>Prohibited language detected.</dark_red>"));
+                case MUTE -> player.sendMessage(FUtil.miniMessage("<red>You have been muted for prohibited language.</red>"));
+                case WARNING -> player.sendMessage(FUtil.miniMessage(
+                        "<red>Warning: prohibited language detected.</red>"));
+                case LOG_ONLY -> {}
+            }
         });
+    }
+
+    private boolean rejectMutedChat(Player player)
+    {
+        if (!PermBansList.get().isMuted(player.getUniqueId().toString())) return false;
+        UUID uuid = player.getUniqueId();
+        if (muteNotices.add(uuid))
+        {
+            Bukkit.getScheduler().runTask(plugin, () ->
+            {
+                if (player.isOnline())
+                {
+                    player.sendMessage(FUtil.miniMessage("<red>You are muted.</red>"));
+                }
+            });
+            Bukkit.getScheduler().runTaskLater(plugin, () -> muteNotices.remove(uuid), 20L);
+        }
+        return true;
     }
 
     /**

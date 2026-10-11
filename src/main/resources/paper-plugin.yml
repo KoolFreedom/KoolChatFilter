@@ -1,17 +1,18 @@
 name: KoolChatFilter
 main: eu.koolfreedom.KoolChatFilter
-version: '2.1'
+version: ${buildVersion}
 description: Simple chat filter plugin
-author: gamingto12
+authors:
+  - "gamingto12"
+  - "0x7694C9"
 api-version: '26.2'
 
 permissions:
   kfc.default:
     children:
-      - kfc.command.koolchatfilter
-      - kfc.command.permbans
+      - kfc.koolchatfilter
+      - kfc.permbans
   kfc.admin:
     children:
-      - kfc.command.crash
-      - kfc.command.obliterate
-      - kfc.command.reload
+      - kfc.obliterate
+      - kfc.reload

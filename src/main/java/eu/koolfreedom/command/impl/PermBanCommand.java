@@ -35,7 +35,7 @@ public class PermBanCommand extends KoolCommand
         if (args[0].equalsIgnoreCase("reload"))
         {
             indefBans.reload();
-            msg(sender, "<green>Reloaded the permbans file");
+            msg(sender, "<green>Reloaded local punishment entries");
             return true;
         }
 

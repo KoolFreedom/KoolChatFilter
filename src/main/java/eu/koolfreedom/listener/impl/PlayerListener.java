@@ -50,13 +50,19 @@ public class PlayerListener extends KoolListener
         String banType = nameBanned ? "username" : uuidBanned ? "UUID" : "IP address";
         Component reason = idot.getReasonComponent(entryName);
 
+        String banDuration = idot.getEntry(entryName)
+                .filter(entry -> entry.getPunishment() == PermBansList.PunishmentType.TEMPORARY_BAN)
+                .map(entry -> "temporarily (expires in "
+                        + PermBansList.formatDuration(entry.getExpiresAtMillis() - System.currentTimeMillis()) + ") ")
+                .orElse("indefinitely ");
         Component kickMessage = FUtil.miniMessage("""
-            <red>Your <ban_type> is indefinitely banned from this server!
+            <red>Your <ban_type> is <ban_duration>banned from this server!
             <red>Reason:</red> <gold><reason>
             <red>Appeal at:</red> <gold><ban_url>
             """,
                 Placeholder.component("reason", reason),
                 Placeholder.unparsed("ban_type", banType),
+                Placeholder.unparsed("ban_duration", banDuration),
                 Placeholder.unparsed("ban_url", ConfigEntry.BAN_URL.getString())
         );
 
@@ -65,7 +71,7 @@ public class PlayerListener extends KoolListener
 
         // Broadcasts to admins
         FUtil.broadcast("kfc.admin",
-                "<#ffb373><player><gray> tried joining, but they're indefinitely banned!",
+                "<#ffb373><player><gray> tried joining, but they're banned!",
                 Placeholder.unparsed("player", event.getName())
         );
     }

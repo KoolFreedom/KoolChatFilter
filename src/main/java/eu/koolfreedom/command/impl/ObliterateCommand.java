@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> <reason>", aliases = {"execute"})
+@CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> [reason]", aliases = {"execute"})
 public class ObliterateCommand extends KoolCommand
 {
     @Override
@@ -59,8 +59,6 @@ public class ObliterateCommand extends KoolCommand
 
         Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> broadcast("<red><target> has been eradicated from existence!",
                 Placeholder.unparsed("target", target.getName())), 30);
-
-        FilterService.crashPlayer(target);
 
         String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
         Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () ->

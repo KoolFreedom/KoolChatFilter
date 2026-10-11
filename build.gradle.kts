@@ -26,34 +26,56 @@ dependencies {
 
     // Utilities
     implementation("org.apache.commons:commons-lang3:3.18.0")
-    implementation("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
     implementation("org.reflections:reflections:0.10.2")
 
     // Misc
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.xerial:sqlite-jdbc:3.50.2.0")
 }
+
+val buildPropsFile = layout.projectDirectory.file("src/main/resources/build.properties").asFile
+val buildNumberFile = layout.projectDirectory.file("build-number.properties").asFile
+
+fun readBuildNumber(): Int {
+    if (!buildNumberFile.exists()) return 1
+    return buildNumberFile.readLines()
+        .firstOrNull { it.startsWith("buildNumber=") }
+        ?.substringAfter("=")
+        ?.trim()
+        ?.toIntOrNull()
+        ?.plus(1)
+        ?: 1
+}
+
+// These are all computed once at configuration time and captured as plain values.
+val buildAuthor: String = (findProperty("buildAuthor") ?: "KoolFreedom").toString()
+val buildNumber: Int    = readBuildNumber()
+val buildDate: String   = SimpleDateFormat("M/dd/yyyy 'at' h:mm:ss aa zzz").format(Date())
+val buildVersion: String = version.toString()
 
 tasks {
     // Update build.properties with build information
     processResources {
-        val buildAuthor = project.findProperty("buildAuthor") ?: "KoolFreedom"
-        val buildNumber = getBuildNumber()
-        val buildDate = SimpleDateFormat("M/dd/yyyy 'at' h:mm:ss aa zzz").format(Date())
-
-        inputs.property("buildAuthor", buildAuthor)
-        inputs.property("buildNumber", buildNumber)
-        inputs.property("buildVersion", project.version)
-        inputs.property("buildDate", buildDate)
+        inputs.property("buildAuthor",  buildAuthor)
+        inputs.property("buildNumber",  buildNumber)
+        inputs.property("buildVersion", buildVersion)
+        inputs.property("buildDate",    buildDate)
 
         filesMatching("build.properties") {
             expand(mapOf(
-                "buildAuthor" to buildAuthor,
-                "buildNumber" to buildNumber,
-                "buildVersion" to project.version,
-                "buildDate" to buildDate
+                "buildAuthor"  to buildAuthor,
+                "buildNumber"  to buildNumber,
+                "buildVersion" to buildVersion,
+                "buildDate"    to buildDate
             ))
         }
+
+        filesMatching("paper-plugin.yml") {
+            expand(mapOf("buildVersion" to buildVersion))
+        }
+
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
@@ -69,6 +91,7 @@ tasks {
         relocate("com.google.gson", "eu.koolfreedom.libs.gson")
         relocate("org.reflections", "eu.koolfreedom.libs.reflections")
         relocate("javassist", "eu.koolfreedom.libs.javassist")
+        finalizedBy("incrementBuildNumber")
     }
 
     build {
@@ -76,55 +99,18 @@ tasks {
     }
 }
 
-/**
- * Read the current build number from build.properties and increment it.
- * If the file doesn't exist or the property isn't found, returns 1.
- */
-fun getBuildNumber(): Int {
-    val buildPropsFile = file("src/main/resources/build.properties")
-    if (!buildPropsFile.exists()) {
-        return 1
-    }
-
-    val props = mutableMapOf<String, String>()
-    buildPropsFile.readLines().forEach { line ->
-        if (line.isNotEmpty() && !line.startsWith("#")) {
-            val (key, value) = line.split("=", limit = 2).let { parts ->
-                if (parts.size == 2) parts[0] to parts[1] else return@forEach
-            }
-            props[key.trim()] = value.trim()
-        }
-    }
-    val currentNumber = (props["buildNumber"] ?: "0").toIntOrNull() ?: 0
-    return currentNumber + 1
-}
-
-/**
- * Task to increment build number in build.properties
- */
 tasks.register("incrementBuildNumber") {
-    description = ""
+    description = "Writes the incremented build number back to build-number.properties for the next build"
+
+    // Capture everything needed as local vals so the doLast lambda is a pure
+    // closure over plain values and never references `project`.
+    val outputFile = buildNumberFile
+    val nextNumber = buildNumber
+
+    outputs.file(outputFile)
+
     doLast {
-        val buildPropsFile = file("src/main/resources/build.properties")
-        buildPropsFile.parentFile.mkdirs()
-
-        val props = mutableMapOf<String, String>()
-        if (buildPropsFile.exists()) {
-            buildPropsFile.readLines().forEach { line ->
-                if (line.isNotEmpty() && !line.startsWith("#")) {
-                    val (key, value) = line.split("=", limit = 2).let { parts ->
-                        if (parts.size == 2) parts[0] to parts[1] else return@forEach
-                    }
-                    props[key.trim()] = value.trim()
-                }
-            }
-        }
-
-        val currentNumber = (props["buildNumber"] ?: "0").toIntOrNull() ?: 0
-        props["buildNumber"] = (currentNumber + 1).toString()
-        props["buildVersion"] = project.version.toString()
-        props["buildDate"] = System.currentTimeMillis().toString()
-
-        buildPropsFile.writeText(props.entries.joinToString("\n") { (k, v) -> "$k=$v" })
+        outputFile.parentFile.mkdirs()
+        outputFile.writeText("buildNumber=$nextNumber\n")
     }
 }

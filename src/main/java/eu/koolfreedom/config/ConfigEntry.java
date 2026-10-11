@@ -9,6 +9,13 @@ import java.util.List;
 public enum ConfigEntry
 {
     FILTER(List.class, "filter.rules"),
+    FILTER_REASON(String.class, "filter.reason"),
+    FILTER_PUNISHMENT(String.class, "filter.punishment"),
+    FILTER_PUNISHMENT_DURATION(String.class, "filter.punishment-duration"),
+    FILTER_BAN_COMMAND(String.class, "filter.external-commands.ban"),
+    FILTER_TEMPBAN_COMMAND(String.class, "filter.external-commands.tempban"),
+    FILTER_MUTE_COMMAND(String.class, "filter.external-commands.mute"),
+    FILTER_UNBAN_COMMAND(String.class, "filter.external-commands.unban"),
     DEBUG_MODE(Boolean.class, "debug-mode"),
     BAN_URL(String.class, "ban_url");
     //

@@ -28,7 +28,6 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
     protected final KoolChatFilter plugin = KoolChatFilter.getInstance();
 
     protected final String playerNotFound = "<gray>Could not find the specified player.";
-    protected final String playersOnly = "<red>This command can only be executed in-game.";
 
     /**
      * Constructor to initialize commands. Commands created this way <b>must</b> be annotated with the
@@ -48,7 +47,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
         setName(parameters.name());
         setDescription(parameters.description());
         setUsage(parameters.usage());
-        setPermission(parameters.permission().isBlank() ? "kfc.command." + getName() : parameters.permission());
+        setPermission(parameters.permission().isBlank() ? "kfc." + getName() : parameters.permission());
         setAliases(Arrays.stream(parameters.aliases()).toList());
     }
 

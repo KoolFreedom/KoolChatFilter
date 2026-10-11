@@ -2,7 +2,7 @@ package eu.koolfreedom;
 
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.CommandLoader;
-import eu.koolfreedom.command.impl.CrashCommand;
+import eu.koolfreedom.command.impl.KoolChatFilterCommand;
 import eu.koolfreedom.config.MainConfig;
 import eu.koolfreedom.listener.impl.FilterListener;
 import eu.koolfreedom.filter.FilterService;
@@ -33,14 +33,10 @@ public class KoolChatFilter extends JavaPlugin
     @Override
     public void onEnable()
     {
-        FLog.info("Created by gamingto12");
-        FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
-        FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
-
         MainConfig.load();
         FLog.info("Loaded main configuration");
 
-        commandLoader = new CommandLoader(CrashCommand.class);
+        commandLoader = new CommandLoader(KoolChatFilterCommand.class);
         commandLoader.loadCommands();
         FLog.info("Loaded {} commands,", commandLoader.getKoolCommands().size());
 
@@ -57,7 +53,7 @@ public class KoolChatFilter extends JavaPlugin
     public void onDisable()
     {
         FLog.info("Disabled KoolChatFilter");
-        PermBansList.get().save();
+        PermBansList.get().closeDatabase();
     }
 
     private void loadListeners()

