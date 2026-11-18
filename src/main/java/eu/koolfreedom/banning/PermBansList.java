@@ -3,6 +3,7 @@ package eu.koolfreedom.banning;
 import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.utilities.FLog;
+import eu.koolfreedom.utilities.FUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -95,7 +96,6 @@ public final class PermBansList
 
     private final File legacyFile;
     private final Connection connection;
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private volatile Index index = Index.empty();
 
     private PermBansList()
@@ -470,7 +470,7 @@ public final class PermBansList
     {
         String reason = getReason(name);
         return reason.startsWith("<")
-                ? miniMessage.deserialize(reason)
+                ? FUtil.miniMessage(reason)
                 : LegacyComponentSerializer.legacyAmpersand().deserialize(reason);
     }
 

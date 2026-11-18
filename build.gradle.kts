@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // Paper API
-    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+    compileOnly("io.papermc.paper:paper-api:26.3.build.+")
 
     // Utilities
     implementation("org.apache.commons:commons-lang3:3.18.0")
@@ -31,7 +31,6 @@ dependencies {
     implementation("org.reflections:reflections:0.10.2")
 
     // Misc
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.xerial:sqlite-jdbc:3.50.2.0")
 }
 
@@ -82,13 +81,7 @@ tasks {
     shadowJar {
         archiveFileName.set("KoolChatFilter-${project.version}.jar")
 
-        exclude("META-INF/*.SF")
-        exclude("META-INF/*.DSA")
-        exclude("META-INF/*.RSA")
-        exclude("META-INF/versions/**")
-
         mergeServiceFiles()
-        relocate("com.google.gson", "eu.koolfreedom.libs.gson")
         relocate("org.reflections", "eu.koolfreedom.libs.reflections")
         relocate("javassist", "eu.koolfreedom.libs.javassist")
         finalizedBy("incrementBuildNumber")

@@ -43,7 +43,8 @@ public class KoolChatFilter extends JavaPlugin
         filterService = new FilterService();
         FilterService.reload();
 
-        reloadBansConfig();
+        PermBansList.get().reload();
+        FLog.info("Reloaded bans");
 
         loadListeners();
         FLog.info("Loaded listeners");
@@ -60,10 +61,5 @@ public class KoolChatFilter extends JavaPlugin
     {
         playerListener = new PlayerListener();
         filterListener = new FilterListener(filterService);
-    }
-
-    private void reloadBansConfig()
-    {
-        PermBansList.get().reload();
     }
 }
