@@ -8,11 +8,11 @@ authors:
 api-version: '26.2'
 
 permissions:
-  kfc.default:
+  koolchatfilter.default:
     children:
-      - kfc.koolchatfilter
-      - kfc.permbans
-  kfc.admin:
+      - koolchatfilter.koolchatfilter
+      - koolchatfilter.permbans
+  koolchatfilter.admin:
     children:
-      - kfc.obliterate
-      - kfc.reload
+      - koolchatfilter.obliterate
+      - koolchatfilter.reload

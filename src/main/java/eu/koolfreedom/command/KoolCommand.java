@@ -47,7 +47,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
         setName(parameters.name());
         setDescription(parameters.description());
         setUsage(parameters.usage());
-        setPermission(parameters.permission().isBlank() ? "kfc." + getName() : parameters.permission());
+        setPermission(parameters.permission().isBlank() ? "koolchatfilter." + getName() : parameters.permission());
         setAliases(Arrays.stream(parameters.aliases()).toList());
     }
 

@@ -34,7 +34,7 @@ public @interface CommandParameters
     String usage() default "/<command>";
 
     /**
-     * The command's permission node. This is automatically set to {@code kfc.command.<command name>}, but can be set to
+     * The command's permission node. This is automatically set to {@code koolchatfilter.<command name>}, but can be set to
      * 	something custom if you like.
      * @return	String
      */
