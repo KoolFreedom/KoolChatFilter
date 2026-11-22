@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.banning.PermBansList;
+import eu.koolfreedom.banning.PunishmentType;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.listener.KoolListener;
 import eu.koolfreedom.utilities.FUtil;
@@ -17,7 +18,7 @@ public class PlayerListener extends KoolListener
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPermBannedPlayerLogin(AsyncPlayerPreLoginEvent event)
     {
-        PermBansList idot = PermBansList.get();
+        PermBansList permBansList = PermBansList.get();
 
         String currentName = event.getName().toLowerCase();
         String uuid = event.getUniqueId().toString();
@@ -25,9 +26,9 @@ public class PlayerListener extends KoolListener
         InetAddress addr = event.getAddress();
         String ip = addr != null ? addr.getHostAddress() : null;
 
-        boolean nameBanned = idot.isNameBanned(currentName);
-        boolean uuidBanned = idot.isUuidBanned(uuid);
-        boolean ipBanned = ip != null && idot.isIpBanned(ip);
+        boolean nameBanned = permBansList.isNameBanned(currentName);
+        boolean uuidBanned = permBansList.isUuidBanned(uuid);
+        boolean ipBanned = ip != null && permBansList.isIpBanned(ip);
 
         if (!(nameBanned || uuidBanned || ipBanned)) {
             return; // not banned
@@ -40,18 +41,18 @@ public class PlayerListener extends KoolListener
         }
         else if (uuidBanned)
         {
-            entryName = idot.findBannedNameByUuid(uuid).orElse(currentName);
+            entryName = permBansList.findBannedNameByUuid(uuid).orElse(currentName);
         }
         else
         {
-            entryName = idot.findBannedNameByIp(ip).orElse(currentName);
+            entryName = permBansList.findBannedNameByIp(ip).orElse(currentName);
         }
 
         String banType = nameBanned ? "username" : uuidBanned ? "UUID" : "IP address";
-        Component reason = idot.getReasonComponent(entryName);
+        Component reason = permBansList.getReasonComponent(entryName);
 
-        String banDuration = idot.getEntry(entryName)
-                .filter(entry -> entry.getPunishment() == PermBansList.PunishmentType.TEMPORARY_BAN)
+        String banDuration = permBansList.getEntry(entryName)
+                .filter(entry -> entry.getPunishment() == PunishmentType.TEMPORARY_BAN)
                 .map(entry -> "temporarily (expires in "
                         + PermBansList.formatDuration(entry.getExpiresAtMillis() - System.currentTimeMillis()) + ") ")
                 .orElse("indefinitely ");

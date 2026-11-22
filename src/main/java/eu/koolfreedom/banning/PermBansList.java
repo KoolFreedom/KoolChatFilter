@@ -4,9 +4,7 @@ import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.utilities.FLog;
 import eu.koolfreedom.utilities.FUtil;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -14,19 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.sql.*;
+import java.util.*;
 
 /**
  * Stores local player punishments in SQLite and provides an optional command bridge to
@@ -37,62 +24,6 @@ public final class PermBansList
     private static final String DEFAULT_REASON = "You've met with a terrible fate, haven't you?";
     private static final long DEFAULT_DURATION_MILLIS = 7L * 24 * 60 * 60 * 1000;
     private static PermBansList instance;
-
-    /** Punishments that can be selected for filtered content and the obliterate command. */
-    public enum PunishmentType
-    {
-        PERMANENT_BAN,
-        TEMPORARY_BAN,
-        MUTE,
-        KICK,
-        WARNING,
-        LOG_ONLY
-    }
-
-    @Getter
-    public static final class BanEntry
-    {
-        private final String name;
-        private final String uuid;
-        private final Set<String> ips;
-        private final String reason;
-        private final PunishmentType punishment;
-        private final long expiresAtMillis;
-
-        private BanEntry(String name, String uuid, Set<String> ips, String reason,
-                         PunishmentType punishment, long expiresAtMillis)
-        {
-            this.name = name;
-            this.uuid = uuid;
-            this.ips = Set.copyOf(ips);
-            this.reason = reason;
-            this.punishment = punishment;
-            this.expiresAtMillis = expiresAtMillis;
-        }
-
-        private boolean isActive()
-        {
-            return expiresAtMillis == 0 || expiresAtMillis > System.currentTimeMillis();
-        }
-
-        private boolean isBan()
-        {
-            return punishment == PunishmentType.PERMANENT_BAN
-                    || punishment == PunishmentType.TEMPORARY_BAN;
-        }
-    }
-
-    private record Index(Map<String, BanEntry> names, Map<String, BanEntry> uuids, Map<String, BanEntry> ips) {
-            private Index(Map<String, BanEntry> names, Map<String, BanEntry> uuids, Map<String, BanEntry> ips) {
-                this.names = Collections.unmodifiableMap(names);
-                this.uuids = Collections.unmodifiableMap(uuids);
-                this.ips = Collections.unmodifiableMap(ips);
-            }
-
-            private static Index empty() {
-                return new Index(new HashMap<>(), new HashMap<>(), new HashMap<>());
-            }
-        }
 
     private final File legacyFile;
     private final Connection connection;
@@ -257,7 +188,7 @@ public final class PermBansList
                 if (uuid != null && !uuid.isEmpty()) uuids.putIfAbsent(uuid.toLowerCase(Locale.ROOT), entry);
                 if (entry.isBan())
                 {
-                    for (String ip : entry.getIps()) ips.putIfAbsent(ip, entry);
+                    for (String ip : entry.ips()) ips.putIfAbsent(ip, entry);
                 }
             }
         }
@@ -345,7 +276,7 @@ public final class PermBansList
 
     public int getBansCount()
     {
-        return (int) index.names.values().stream()
+        return (int) index.names().values().stream()
                 .filter(entry -> entry.isBan() && entry.isActive())
                 .count();
     }
@@ -434,36 +365,36 @@ public final class PermBansList
 
     public boolean isNameBanned(String name)
     {
-        BanEntry entry = index.names.get(normalizeName(name));
+        BanEntry entry = index.names().get(normalizeName(name));
         return entry != null && entry.isBan() && entry.isActive();
     }
 
     public boolean isUuidBanned(String uuid)
     {
-        BanEntry entry = uuid == null ? null : index.uuids.get(uuid.toLowerCase(Locale.ROOT));
+        BanEntry entry = uuid == null ? null : index.uuids().get(uuid.toLowerCase(Locale.ROOT));
         return entry != null && entry.isBan() && entry.isActive();
     }
 
     public boolean isIpBanned(String ip)
     {
-        BanEntry entry = ip == null ? null : index.ips.get(ip.trim());
+        BanEntry entry = ip == null ? null : index.ips().get(ip.trim());
         return entry != null && entry.isActive();
     }
 
     public boolean isMuted(String uuid)
     {
-        BanEntry entry = uuid == null ? null : index.uuids.get(uuid.toLowerCase(Locale.ROOT));
-        return entry != null && entry.getPunishment() == PunishmentType.MUTE && entry.isActive();
+        BanEntry entry = uuid == null ? null : index.uuids().get(uuid.toLowerCase(Locale.ROOT));
+        return entry != null && entry.punishment() == PunishmentType.MUTE && entry.isActive();
     }
 
     public Optional<BanEntry> getEntry(String name)
     {
-        return Optional.ofNullable(index.names.get(normalizeName(name)));
+        return Optional.ofNullable(index.names().get(normalizeName(name)));
     }
 
     public String getReason(String name)
     {
-        return getEntry(name).map(BanEntry::getReason).orElse(DEFAULT_REASON);
+        return getEntry(name).map(BanEntry::reason).orElse(DEFAULT_REASON);
     }
 
     public Component getReasonComponent(String name)
@@ -644,15 +575,15 @@ public final class PermBansList
 
     public Optional<String> findBannedNameByIp(String ip)
     {
-        BanEntry entry = ip == null ? null : index.ips.get(ip.trim());
-        return entry == null || !entry.isActive() ? Optional.empty() : Optional.of(entry.getName());
+        BanEntry entry = ip == null ? null : index.ips().get(ip.trim());
+        return entry == null || !entry.isActive() ? Optional.empty() : Optional.of(entry.name());
     }
 
     public Optional<String> findBannedNameByUuid(String uuid)
     {
-        BanEntry entry = uuid == null ? null : index.uuids.get(uuid.toLowerCase(Locale.ROOT));
+        BanEntry entry = uuid == null ? null : index.uuids().get(uuid.toLowerCase(Locale.ROOT));
         return entry == null || !entry.isBan() || !entry.isActive()
-                ? Optional.empty() : Optional.of(entry.getName());
+                ? Optional.empty() : Optional.of(entry.name());
     }
 
     public void closeDatabase()

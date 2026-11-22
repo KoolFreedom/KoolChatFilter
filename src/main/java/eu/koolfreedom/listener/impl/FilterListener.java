@@ -1,6 +1,7 @@
 package eu.koolfreedom.listener.impl;
 
 import eu.koolfreedom.banning.PermBansList;
+import eu.koolfreedom.banning.PunishmentType;
 import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.filter.FilterResult;
 import eu.koolfreedom.filter.FilterService;
@@ -45,8 +46,8 @@ public final class FilterListener extends KoolListener
             return;
         }
 
-        String message = FUtil.plainText(event.message());
-        FilterResult result = service.check(message);
+        final String message = FUtil.plainText(event.message());
+        final FilterResult result = service.check(message);
         if (!result.matched()) return;
 
         event.setCancelled(true);
@@ -54,8 +55,8 @@ public final class FilterListener extends KoolListener
     }
 
     /**
-     * Handles the legacy chat event to ensure that the canceled AsyncChatEvent still doesn't show in DiscordSRV bridge.
-     * Why do I have to do this? Because DiscordSRV is a piece of garbage and doesn't respect AsyncChatEvent.
+     * This is only here because AsyncChatEvent does not respect AsyncPlayerChatEvent. This matters a lot because if a server is using DiscordSRV
+     *   then whatever filtered text comes through will still show in the Discord bridge. The point of this plugin is to prevent that text from showing at all.
      */
     @EventHandler @SuppressWarnings("deprecation")
     public void onLegacyChat(AsyncPlayerChatEvent event)
@@ -65,8 +66,8 @@ public final class FilterListener extends KoolListener
             return;
         }
 
-        String message = event.getMessage();
-        FilterResult result = service.check(message);
+        final String message = event.getMessage();
+        final FilterResult result = service.check(message);
         if (!result.matched()) return;
 
         event.setCancelled(true);
@@ -76,8 +77,8 @@ public final class FilterListener extends KoolListener
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event)
     {
-        String command = event.getMessage();
-        FilterResult result = service.check(command);
+        final String command = event.getMessage();
+        final FilterResult result = service.check(command);
         if (!result.matched()) return;
 
         event.setCancelled(true);
@@ -89,8 +90,8 @@ public final class FilterListener extends KoolListener
     {
         for (Component line : event.lines())
         {
-            String text = FUtil.plainText(line);
-            FilterResult result = service.check(text);
+            final String text = FUtil.plainText(line);
+            final FilterResult result = service.check(text);
             if (!result.matched()) continue;
 
             event.setCancelled(true);
@@ -104,8 +105,8 @@ public final class FilterListener extends KoolListener
     {
         for (Component page : event.getNewBookMeta().pages())
         {
-            String text = FUtil.plainText(page);
-            FilterResult result = service.check(text);
+            final String text = FUtil.plainText(page);
+            final FilterResult result = service.check(text);
             if (!result.matched()) continue;
 
             event.setCancelled(true);
@@ -121,8 +122,8 @@ public final class FilterListener extends KoolListener
         if (event.getResult() == null || !event.getResult().hasItemMeta()) return;
         if (!event.getResult().getItemMeta().hasDisplayName()) return;
 
-        String name = FUtil.plainText(event.getResult().getItemMeta().displayName());
-        FilterResult result = service.check(name);
+        final String name = FUtil.plainText(event.getResult().getItemMeta().displayName());
+        final FilterResult result = service.check(name);
         if (!result.matched()) return;
 
         event.setResult(null);
@@ -135,9 +136,9 @@ public final class FilterListener extends KoolListener
         {
             if (!player.isOnline()) return;
 
-            String reason = ConfigEntry.FILTER_REASON.getString();
-            PermBansList banList = PermBansList.get();
-            PermBansList.PunishmentType punishment = banList.getConfiguredPunishment();
+            final String reason = ConfigEntry.FILTER_REASON.getString();
+            final PermBansList banList = PermBansList.get();
+            final PunishmentType punishment = banList.getConfiguredPunishment();
             long duration = banList.getConfiguredDurationMillis();
             if (!banList.applyPunishment(player, reason, punishment, duration))
             {
@@ -174,7 +175,7 @@ public final class FilterListener extends KoolListener
     private boolean rejectMutedChat(Player player)
     {
         if (!PermBansList.get().isMuted(player.getUniqueId().toString())) return false;
-        UUID uuid = player.getUniqueId();
+        final UUID uuid = player.getUniqueId();
         if (muteNotices.add(uuid))
         {
             Bukkit.getScheduler().runTask(plugin, () ->
