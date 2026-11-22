@@ -55,7 +55,7 @@ public final class FilterListener extends KoolListener
     }
 
     /**
-     * This is only here because AsyncChatEvent does not respect AsyncPlayerChatEvent. This matters a lot because if a server is using DiscordSRV
+     * This is only here because AsyncChatEvent does not respect AsyncPlayerChatEvent. This matters a lot because if a server is using DiscordSRV,
      *   then whatever filtered text comes through will still show in the Discord bridge. The point of this plugin is to prevent that text from showing at all.
      */
     @EventHandler @SuppressWarnings("deprecation")
@@ -146,14 +146,12 @@ public final class FilterListener extends KoolListener
                 return;
             }
 
-            FLog.info("Filter matched {} for {} in {}: {}",
-                    result.expression(), player.getName(), source.name(), content);
             FUtil.staffAction(Bukkit.getConsoleSender(), "<source> filter triggered by <player> | Punishment: <punishment>.",
                     Placeholder.unparsed("source", source.name()),
                     Placeholder.unparsed("player", player.getName()),
                     Placeholder.unparsed("punishment", punishment.name()));
             FUtil.broadcast("koolchatfilter.staff",
-                    "<source> filter matched <rule> for <player> (<punishment>): <content>",
+                    "<red><source> filter matched <rule> for <player> (<punishment>): <content>",
                     Placeholder.unparsed("source", source.name()),
                     Placeholder.unparsed("rule", result.expression()),
                     Placeholder.unparsed("player", player.getName()),

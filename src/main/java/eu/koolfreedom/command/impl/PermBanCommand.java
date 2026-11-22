@@ -1,22 +1,24 @@
 package eu.koolfreedom.command.impl;
 
 import eu.koolfreedom.banning.PermBansList;
+import eu.koolfreedom.banning.PunishmentType;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.utilities.FLog;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.Bukkit;
 
 import java.util.Arrays;
 import java.util.List;
 
 @CommandParameters(
         name = "permbans",
-        description = "Removes or reloads the idiots file",
-        usage = "/<command> [reload|remove <type> <value>]",
+        description = "Adds, removes, or reloads permanent bans",
+        usage = "/<command> [reload|add <name> <reason>|remove <name>]",
         aliases = {"indefbans", "indefban", "permban"}
 )
 public class PermBanCommand extends KoolCommand
@@ -24,83 +26,72 @@ public class PermBanCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        PermBansList indefBans = PermBansList.get();
-        if (args.length == 0 || !sender.hasPermission("koolchatfilter.admin"))
+        PermBansList bans = PermBansList.get();
+        if (args.length == 0)
         {
             msg(sender, "<gray>There are <count> permbans.",
-                    Placeholder.unparsed("count", String.valueOf(indefBans.getBansCount())));
+                    Placeholder.unparsed("count", String.valueOf(bans.getBansCount())));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("reload"))
         {
-            indefBans.reload();
+            bans.reload();
             msg(sender, "<green>Reloaded local punishment entries");
+            return true;
+        }
+
+        if (args.length < 2)
+        {
+            msg(sender, "<red>Usage: /permbans <add|remove> <name> [reason]");
+            return true;
+        }
+
+        String name = args[1];
+        if (args[0].equalsIgnoreCase("add"))
+        {
+            if (args.length < 3)
+            {
+                msg(sender, "<red>Usage: /permbans add <name> <reason>");
+                return true;
+            }
+
+            Player target = Bukkit.getPlayerExact(name);
+            if (target == null)
+            {
+                msg(sender, playerNotFound);
+                return true;
+            }
+
+            if (bans.isNameBanned(target.getName()) || bans.isUuidBanned(target.getUniqueId().toString()))
+            {
+                msg(sender, "<yellow><player> is already permanently banned.",
+                        Placeholder.unparsed("player", target.getName()));
+                return true;
+            }
+
+            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+            bans.banPlayer(target, reason, PunishmentType.PERMANENT_BAN);
+            target.kick(Component.text("You have been permanently banned.\nReason: " + reason));
+            msg(sender, "<green>Permanently banned <player>: <reason>",
+                    Placeholder.unparsed("player", target.getName()),
+                    Placeholder.unparsed("reason", reason));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("remove"))
         {
-            if (args.length < 3)
-            {
-                msg(sender, "<red>Usage: /permbans remove <name|uuid|ip> <value>");
-                return true;
-            }
-
-            String type = args[1].toLowerCase();
-            String value = args[2];
-            boolean unbanned = false;
-
             try
             {
-                if (type.equalsIgnoreCase("name"))
+                if (bans.unbanPlayer(name))
                 {
-                    unbanned = indefBans.unbanPlayer(value);
-                    if (unbanned)
-                    {
-                        msg(sender, "<green>Unbanned player: <player>",
-                                Placeholder.unparsed("player", value));
-                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
-                    }
-                    else
-                    {
-                        msg(sender, "<red>Player <player> was not found in ban list.",
-                                Placeholder.unparsed("player", value));
-                    }
-                }
-                else if (type.equalsIgnoreCase("uuid"))
-                {
-                    unbanned = indefBans.unbanPlayerByUuid(value);
-                    if (unbanned)
-                    {
-                        msg(sender, "<green>Unbanned player by UUID: <uuid>",
-                                Placeholder.unparsed("uuid", value));
-                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
-                    }
-                    else
-                    {
-                        msg(sender, "<red>No player found with UUID: <uuid>",
-                                Placeholder.unparsed("uuid", value));
-                    }
-                }
-                else if (type.equalsIgnoreCase("ip"))
-                {
-                    unbanned = indefBans.unbanPlayerByIp(value);
-                    if (unbanned)
-                    {
-                        msg(sender, "<green>Unbanned player by IP: <ip>",
-                                Placeholder.unparsed("ip", value));
-                        FLog.debug("Cleared {}'s entry from permbans.yml", value);
-                    }
-                    else
-                    {
-                        msg(sender, "<red>No player found with IP: <ip>",
-                                Placeholder.unparsed("ip", value));
-                    }
+                    msg(sender, "<green>Unbanned player: <player>", Placeholder.unparsed("player", name));
+                    FLog.debug("Cleared {}'s permanent ban entry", name);
                 }
                 else
                 {
-                    msg(sender, "<red>Invalid type. Use: name, uuid, or ip");
+                    msg(sender, "<red>Player <player> was not found in the permanent ban list.",
+                            Placeholder.unparsed("player", name));
                 }
             }
             catch (Exception e)
@@ -108,42 +99,26 @@ public class PermBanCommand extends KoolCommand
                 FLog.error("Error unbanning player", e);
                 msg(sender, "<red>An error occurred while unbanning the player.");
             }
+            return true;
         }
+
+        msg(sender, "<red>Usage: /permbans <add|remove> <name>");
         return true;
     }
 
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String s, String[] args)
     {
-        if (!sender.hasPermission("koolchatfilter.admin"))
-        {
-            return null;
-        }
+        if (!sender.hasPermission("koolchatfilter.admin")) return null;
 
         if (args.length == 1)
         {
-            return Arrays.asList("reload", "remove");
+            return Arrays.asList("reload", "add", "remove");
         }
 
-        // if "remove", show unban types
-        if (args.length == 2 && args[0].equalsIgnoreCase("remove"))
+        if (args.length == 2 && (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")))
         {
-            return Arrays.asList("name", "uuid", "ip");
-        }
-
-        // depending on type, provide suggestions
-        if (args.length == 3 && args[0].equalsIgnoreCase("remove"))
-        {
-            String type = args[1].toLowerCase();
-            if (type.equalsIgnoreCase("name"))
-            {
-                // could filter banned players but i'm not smart lol
-                return Bukkit.getOnlinePlayers().stream()
-                        .map(Player::getName)
-                        .toList();
-            }
-            // For UUID and IP, we can't easily tab-complete without showing all bans
-            // So we return null to let the user type freely
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         }
 
         return null;

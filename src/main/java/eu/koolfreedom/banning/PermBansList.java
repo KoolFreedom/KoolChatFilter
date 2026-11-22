@@ -41,8 +41,8 @@ public final class PermBansList
         try
         {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(
-                    "jdbc:sqlite:" + new File(plugin.getDataFolder(), "punishments.db").getAbsolutePath());
+            File databaseFile = new File(plugin.getDataFolder(), "punishments.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath());
             initializeDatabase();
             migrateLegacyBans();
             refreshIndex();
@@ -73,7 +73,8 @@ public final class PermBansList
         try (Statement statement = connection.createStatement())
         {
             statement.execute("PRAGMA foreign_keys = ON");
-            statement.execute("PRAGMA journal_mode = WAL");
+            statement.execute("PRAGMA journal_mode = DELETE");
+            statement.execute("PRAGMA synchronous = FULL");
             statement.execute("""
                     CREATE TABLE IF NOT EXISTS punishments (
                         name TEXT PRIMARY KEY COLLATE NOCASE,

@@ -120,9 +120,8 @@ plugin. External-plugin records are not included in the local `/permbans` count.
 | `/koolchatfilter reload`                     | Reloads configuration and filter rules.                                    |
 | `/permbans`                                  | Shows the number of local permanent/temporary bans.                        |
 | `/permbans reload`                           | Refreshes local punishment data from SQLite.                               |
-| `/permbans remove name <name>`               | Removes a local punishment by name.                                        |
-| `/permbans remove uuid <uuid>`               | Removes a local punishment by UUID.                                        |
-| `/permbans remove ip <ip>`                   | Removes a local punishment by IP.                                          |
+| `/permbans remove <name>`              | Removes a local punishment by name.                                        |
+| `/permbans add <name> <reason>`         | Adds a local punishment by name.                                        |
 
 Each command has a `koolchatfilter.<command>` permission. Administrative
 subcommands such as `/permbans remove` additionally require `koolchatfilter.admin`.
