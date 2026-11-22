@@ -32,6 +32,8 @@ dependencies {
 
     // Misc
     implementation("org.xerial:sqlite-jdbc:3.50.2.0")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("org.bstats:bstats-base:3.0.2")
 }
 
 val buildPropsFile = layout.projectDirectory.file("src/main/resources/build.properties").asFile
@@ -84,6 +86,7 @@ tasks {
         mergeServiceFiles()
         relocate("org.reflections", "eu.koolfreedom.libs.reflections")
         relocate("javassist", "eu.koolfreedom.libs.javassist")
+        relocate("org.bstats", "eu.koolfreedom.libs.bstats")
         finalizedBy("incrementBuildNumber")
     }
 

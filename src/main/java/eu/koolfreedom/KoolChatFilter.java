@@ -10,6 +10,7 @@ import eu.koolfreedom.listener.impl.*;
 import eu.koolfreedom.utilities.BuildProperties;
 import eu.koolfreedom.utilities.FLog;
 import lombok.Getter;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -35,6 +36,17 @@ public class KoolChatFilter extends JavaPlugin
     {
         MainConfig.load();
         FLog.info("Loaded main configuration");
+
+        // https://bstats.org/plugin/bukkit/KoolChatFilter/35498
+        try
+        {
+            new Metrics(this, 35498);
+            FLog.info("Enabled Metrics");
+        }
+        catch (Exception e)
+        {
+            FLog.error("Could not start Metrics", e);
+        }
 
         commandLoader = new CommandLoader(KoolChatFilterCommand.class);
         commandLoader.loadCommands();
