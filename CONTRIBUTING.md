@@ -11,7 +11,6 @@ This file covers the practical workflow for this repository. Our project-wide po
 * Make sure your idea fits the policy in the forum post. Joke features, NSFW content, and anything that grants elevated permissions will not be accepted.
 ## Setting up
 
-<!-- project-specific -->
 1. Fork the repository and clone your fork.
 2. Requirements: Gradle + Java 25.
 3. Build with: `./gradlew clean build` on Linux | `gradlew.bat clean build` on Windows.
