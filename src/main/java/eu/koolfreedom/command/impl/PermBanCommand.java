@@ -25,7 +25,7 @@ public class PermBanCommand extends KoolCommand
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
         PermBansList indefBans = PermBansList.get();
-        if (args.length == 0 || !sender.hasPermission("kfc.admin"))
+        if (args.length == 0 || !sender.hasPermission("koolchatfilter.admin"))
         {
             msg(sender, "<gray>There are <count> permbans.",
                     Placeholder.unparsed("count", String.valueOf(indefBans.getBansCount())));
@@ -115,7 +115,7 @@ public class PermBanCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, Command command, String s, String[] args)
     {
-        if (!sender.hasPermission("kfc.admin"))
+        if (!sender.hasPermission("koolchatfilter.admin"))
         {
             return null;
         }

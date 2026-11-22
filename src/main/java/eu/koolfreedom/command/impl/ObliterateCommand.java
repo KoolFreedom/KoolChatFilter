@@ -1,14 +1,11 @@
 package eu.koolfreedom.command.impl;
 
-import eu.koolfreedom.KoolChatFilter;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
-import eu.koolfreedom.filter.FilterService;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,56 +13,40 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandParameters(name = "obliterate", description = "Unleash hell upon someone.", usage = "/<command> <player> [reason]", aliases = {"execute"})
+@CommandParameters(name = "obliterate", description = "Force remove someone from the server (punishment stored in plugin DB)", usage = "/<command> <player>", aliases = {"execute"})
 public class ObliterateCommand extends KoolCommand
 {
+    final PermBansList banManager = PermBansList.get();
+
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String commandLabel, String[] args)
     {
         if (args.length == 0)
-        {
             return false;
-        }
 
-        Player target = Bukkit.getPlayer(args[0]);
+        final Player target = Bukkit.getPlayer(args[0]);
         if (target == null)
         {
             msg(sender, playerNotFound);
-            return true;
+            return false;
         }
 
+        broadcast("<red><player> shouldn't have done that :)",
+                Placeholder.unparsed("player", target.getName()));
+
+        target.setFireTicks(200);
         for (int i = 0; i < 30; i++)
         {
             target.getWorld().strikeLightningEffect(target.getLocation());
         }
 
-        target.setFireTicks(200);
-        target.setGameMode(GameMode.ADVENTURE);
+        if (target.isOp()) target.setOp(false);
+        if (target.isWhitelisted()) target.setWhitelisted(false);
 
-        broadcast("<red><sender> is unleashing divine punishment upon <target>!",
-                Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.unparsed("target", target.getName()));
-
-        Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> broadcast("<red><target> will be completely eviscerated!",
-                Placeholder.unparsed("target", target.getName())), 2);
-
-        Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " clear");
-            if (target.isOp()) target.setOp(false);
-            if (target.isWhitelisted()) target.setWhitelisted(false);
-        }, 2);
-
-        Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> target.setHealth(0), 10);
-
-        Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () -> broadcast("<red><target> has been eradicated from existence!",
-                Placeholder.unparsed("target", target.getName())), 30);
-
-        String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
-        Bukkit.getScheduler().runTaskLater(KoolChatFilter.getInstance(), () ->
-                PermBansList.get().banPlayer(target, "You've met with a terrible fate, haven't you? " + reason), 38);
-        Bukkit.getScheduler().runTaskLater(plugin, () ->
-                FUtil.staffAction(sender, "Permanently banning <target>",
-                        Placeholder.unparsed("target", target.getName())), 38);
+        final String reason = args.length > 1 ? " (" + String.join(" ", Arrays.copyOfRange(args, 1, args.length)) + ")" : "";
+        banManager.banPlayer(target, "You've met with a terrible fate, haven't you? " + reason);
+        FUtil.staffAction(sender, "Banned <player>",
+                Placeholder.unparsed("player", target.getName()));
         return true;
     }
 

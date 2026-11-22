@@ -1,6 +1,7 @@
 package eu.koolfreedom.utilities;
 
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
@@ -34,11 +35,11 @@ public class FUtil
      * @param placeholders  An array of {@link TagResolver} instances. If you don't want to have any additional
      *                      placeholders, just leave out that argument.
      */
-    public static void staffAction(@NotNull CommandSender sender, @NotNull String message,
-                                   @NotNull TagResolver... placeholders)
+    public static void staffAction(@NonNull CommandSender sender, @NonNull String message,
+                                   @NonNull TagResolver... placeholders)
     {
-        broadcast("<red><sender> - <action>", Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.component("action", miniMessage(message, placeholders)));
+        broadcast("<gray><i>[<sender>: <action>]", Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.component("action", FUtil.miniMessage(message, placeholders)));
     }
 
     public static void broadcast(Component component)
