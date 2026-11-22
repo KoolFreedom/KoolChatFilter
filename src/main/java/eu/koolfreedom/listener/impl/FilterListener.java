@@ -152,7 +152,7 @@ public final class FilterListener extends KoolListener
                     Placeholder.unparsed("source", source.name()),
                     Placeholder.unparsed("player", player.getName()),
                     Placeholder.unparsed("punishment", punishment.name()));
-            FUtil.broadcast("kfc.admin",
+            FUtil.broadcast("koolchatfilter.staff",
                     "<source> filter matched <rule> for <player> (<punishment>): <content>",
                     Placeholder.unparsed("source", source.name()),
                     Placeholder.unparsed("rule", result.expression()),

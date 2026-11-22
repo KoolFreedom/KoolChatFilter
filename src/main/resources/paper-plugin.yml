@@ -12,7 +12,8 @@ permissions:
     children:
       - koolchatfilter.koolchatfilter
       - koolchatfilter.permbans
+  koolchatfilter.staff:
+    description: Permision node for general staff, used to handle staff-only broadcasts
   koolchatfilter.admin:
     children:
-      - koolchatfilter.obliterate
       - koolchatfilter.reload

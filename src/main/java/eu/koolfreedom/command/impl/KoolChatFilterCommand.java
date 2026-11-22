@@ -19,14 +19,14 @@ import java.util.List;
         name = "koolchatfilter",
         description = "Gives a description about the plugin or reloads it",
         usage = "/<command> [reload]",
-        aliases = {"kfc", "koolfilter"}
+        aliases = "koolfilter"
 )
 public class KoolChatFilterCommand extends KoolCommand
 {
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        if (args.length == 0 || !sender.hasPermission("kfc.admin"))
+        if (args.length == 0 || !sender.hasPermission("koolchatfilter.admin"))
         {
             final String authors = String.join(", ", plugin.getPluginMeta().getAuthors());
             BuildProperties build = plugin.getBuildMeta();
@@ -60,7 +60,7 @@ public class KoolChatFilterCommand extends KoolCommand
     @Override
     public List<String> tabComplete(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args)
     {
-        if (sender.hasPermission("kfc.command.reload") && args.length == 1)
+        if (sender.hasPermission("koolchatfilter.admin") && args.length == 1)
         {
             return Collections.singletonList("reload");
         }

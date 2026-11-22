@@ -71,7 +71,7 @@ public class PlayerListener extends KoolListener
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, kickMessage);
 
         // Broadcasts to admins
-        FUtil.broadcast("kfc.admin",
+        FUtil.broadcast("koolchatfilter.staff",
                 "<#ffb373><player><gray> tried joining, but they're banned!",
                 Placeholder.unparsed("player", event.getName())
         );

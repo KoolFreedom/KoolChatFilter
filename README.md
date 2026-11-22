@@ -123,11 +123,9 @@ plugin. External-plugin records are not included in the local `/permbans` count.
 | `/permbans remove name <name>`               | Removes a local punishment by name.                                        |
 | `/permbans remove uuid <uuid>`               | Removes a local punishment by UUID.                                        |
 | `/permbans remove ip <ip>`                   | Removes a local punishment by IP.                                          |
-| `/obliterate <player> [reason]` (`/execute`) | Permanently bans the player, this ban is always going to be stored locally |
-| `/crash [player]`                            | Runs the client crash effect.                                              |
 
-Each command has a `kfc.<command>` permission. Administrative
-subcommands such as `/permbans remove` additionally require `kfc.admin`.
+Each command has a `koolchatfilter.<command>` permission. Administrative
+subcommands such as `/permbans remove` additionally require `koolchatfilter.admin`.
 Default permission groups and their command permissions are declared in
 `paper-plugin.yml`.
 
