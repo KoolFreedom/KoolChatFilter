@@ -5,6 +5,9 @@ import eu.koolfreedom.config.ConfigEntry;
 import eu.koolfreedom.utilities.FLog;
 import eu.koolfreedom.utilities.FUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -530,30 +533,6 @@ public final class PermBansList
         return removed;
     }
 
-    public boolean unbanPlayerByUuid(String uuid)
-    {
-        Optional<String> name = findBannedNameByUuid(uuid);
-        boolean removed = name.map(this::removeLocal).orElse(false);
-        String externalCommand = ConfigEntry.FILTER_UNBAN_COMMAND.getString();
-        if (externalCommand != null && !externalCommand.isBlank())
-        {
-            removed |= dispatchExternalCommand(externalCommand, name.orElse(""), uuid, "", "", "");
-        }
-        return removed;
-    }
-
-    public boolean unbanPlayerByIp(String ip)
-    {
-        Optional<String> name = findBannedNameByIp(ip);
-        boolean removed = name.map(this::removeLocal).orElse(false);
-        String externalCommand = ConfigEntry.FILTER_UNBAN_COMMAND.getString();
-        if (externalCommand != null && !externalCommand.isBlank())
-        {
-            removed |= dispatchExternalCommand(externalCommand, name.orElse(""), "", ip, "", "");
-        }
-        return removed;
-    }
-
     private synchronized boolean removeLocal(String name)
     {
         try
@@ -585,6 +564,34 @@ public final class PermBansList
         BanEntry entry = uuid == null ? null : index.uuids().get(uuid.toLowerCase(Locale.ROOT));
         return entry == null || !entry.isBan() || !entry.isActive()
                 ? Optional.empty() : Optional.of(entry.name());
+    }
+
+    public Component createKickMessage(PermBansList bans, BanMatch match)
+    {
+        final String banDuration = bans.getEntry(match.entryName())
+                .filter(entry -> entry.getPunishment() == PunishmentType.TEMPORARY_BAN)
+                .map(entry -> "temporarily (expires in "
+                        + formatDuration(entry.getExpiresAtMillis() - System.currentTimeMillis()) + ") ")
+                .orElse("indefinitely ");
+
+        final Component DIVIDER = Component.text("                                        ", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH);
+
+        return FUtil.miniMessage(
+                """
+                        <divider>
+                        <newline>
+                        <gray>Your <ban_type> is <white><ban_duration></white>banned from this server.
+                        <gray>Reason: <white><reason>
+                        <gray>Appeal: <white><appeal>
+                        <newline>
+                        <divider>
+                        """,
+                Placeholder.component("reason", bans.getReasonComponent(match.entryName())),
+                Placeholder.unparsed("ban_type", match.type()),
+                Placeholder.unparsed("ban_duration", banDuration),
+                Placeholder.unparsed("appeal", ConfigEntry.BAN_URL.getString()),
+                Placeholder.component("divider", DIVIDER)
+        );
     }
 
     public void closeDatabase()

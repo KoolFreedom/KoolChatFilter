@@ -28,9 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class FilterListener extends KoolListener
 {
     private final FilterService service;
-    // This is a set of players who have been punished for chat messages,
-    // to prevent multiple punishments for the same message.
-    private final Set<UUID> chatPunishments = ConcurrentHashMap.newKeySet();
     private final Set<UUID> muteNotices = ConcurrentHashMap.newKeySet();
 
     public FilterListener(FilterService service)
@@ -41,17 +38,19 @@ public final class FilterListener extends KoolListener
     @EventHandler
     public void onChat(AsyncChatEvent event)
     {
-        if (rejectMutedChat(event.getPlayer())) {
+        if (rejectMutedChat(event.getPlayer()))
+        {
             event.setCancelled(true);
             return;
         }
 
+        final Player player = event.getPlayer();
         final String message = FUtil.plainText(event.message());
         final FilterResult result = service.check(message);
         if (!result.matched()) return;
 
         event.setCancelled(true);
-        punishChatOnce(event.getPlayer(), message, result);
+        punish(player, FilterSource.CHAT, message, result);
     }
 
     /**
@@ -61,7 +60,8 @@ public final class FilterListener extends KoolListener
     @EventHandler @SuppressWarnings("deprecation")
     public void onLegacyChat(AsyncPlayerChatEvent event)
     {
-        if (rejectMutedChat(event.getPlayer())) {
+        if (rejectMutedChat(event.getPlayer()))
+        {
             event.setCancelled(true);
             return;
         }
@@ -70,8 +70,7 @@ public final class FilterListener extends KoolListener
         final FilterResult result = service.check(message);
         if (!result.matched()) return;
 
-        event.setCancelled(true);
-        punishChatOnce(event.getPlayer(), message, result);
+        event.setCancelled(true); // silently cancel the event | punishment already handled by ACE event listener.
     }
 
     @EventHandler
@@ -186,17 +185,5 @@ public final class FilterListener extends KoolListener
             Bukkit.getScheduler().runTaskLater(plugin, () -> muteNotices.remove(uuid), 20L);
         }
         return true;
-    }
-
-    /**
-     * Punishes a player for a chat message, but only once per second to prevent multiple punishments for the same message.
-     */
-    private void punishChatOnce(Player player, String content, FilterResult result)
-    {
-        if (!chatPunishments.add(player.getUniqueId())) return;
-
-        punish(player, FilterSource.CHAT, content, result);
-        Bukkit.getScheduler().runTaskLater(plugin,
-                () -> chatPunishments.remove(player.getUniqueId()), 20L);
     }
 }

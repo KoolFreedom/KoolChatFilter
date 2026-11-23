@@ -28,7 +28,7 @@ public final class PlayerListener extends KoolListener
         if (match == null) return;
 
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
-                createKickMessage(bans, match));
+                bans.createKickMessage(bans, match));
 
         FUtil.broadcast("koolchatfilter.staff",
                 "<#ffb373><player><gray> tried joining, but they're banned!",
@@ -57,33 +57,5 @@ public final class PlayerListener extends KoolListener
         }
 
         return null;
-    }
-
-    private Component createKickMessage(PermBansList bans, BanMatch match)
-    {
-        final String banDuration = bans.getEntry(match.entryName())
-                .filter(entry -> entry.getPunishment() == PunishmentType.TEMPORARY_BAN)
-                .map(entry -> "temporarily (expires in "
-                        + PermBansList.formatDuration(entry.getExpiresAtMillis() - System.currentTimeMillis()) + ") ")
-                .orElse("indefinitely ");
-
-        final Component DIVIDER = Component.text("                                        ", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH);
-
-        return FUtil.miniMessage(
-                """
-                        <divider>
-                        <newline>
-                        <gray>Your <ban_type> is <white><ban_duration></white>banned from this server.
-                        <gray>Reason: <white><reason>
-                        <gray>Appeal: <white><appeal>
-                        <newline>
-                        <divider>
-                        """,
-                Placeholder.component("reason", bans.getReasonComponent(match.entryName())),
-                Placeholder.unparsed("ban_type", match.type()),
-                Placeholder.unparsed("ban_duration", banDuration),
-                Placeholder.unparsed("appeal", ConfigEntry.BAN_URL.getString()),
-                Placeholder.component("divider", DIVIDER)
-        );
     }
 }
