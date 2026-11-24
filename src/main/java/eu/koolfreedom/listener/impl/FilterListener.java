@@ -50,7 +50,7 @@ public final class FilterListener extends KoolListener
         if (!result.matched()) return;
 
         event.setCancelled(true);
-        punish(player, FilterSource.CHAT, message, result);
+        Bukkit.getScheduler().runTask(plugin, () -> punish(player, FilterSource.CHAT, message, result));
     }
 
     /**

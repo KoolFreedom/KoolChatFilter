@@ -9,11 +9,14 @@ api-version: '26.2'
 
 permissions:
   koolchatfilter.default:
+    default: op
     children:
       - koolchatfilter.koolchatfilter
       - koolchatfilter.permbans
   koolchatfilter.staff:
+    default: op
     description: Permision node for general staff, used to handle staff-only broadcasts
   koolchatfilter.admin:
+    default: op
     children:
       - koolchatfilter.reload

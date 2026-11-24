@@ -34,6 +34,10 @@ public class KoolChatFilter extends JavaPlugin
     @Override
     public void onEnable()
     {
+        FLog.info("Created by gamingto12 and 0x7694C9");
+        FLog.info("Version {}.{}", buildMeta.getVersion(), buildMeta.getNumber());
+        FLog.info("Compiled {} by {}", buildMeta.getDate(), buildMeta.getAuthor());
+
         MainConfig.load();
         FLog.info("Loaded main configuration");
 
