@@ -31,7 +31,7 @@ public class KoolChatFilterCommand extends KoolCommand
             final String authors = String.join(", ", plugin.getPluginMeta().getAuthors());
             BuildProperties build = plugin.getBuildMeta();
             msg(sender,
-                    "<gray>KoolChatFilter <dark_gray>• <white>Chat filter plugin");
+                    "<gold>KoolChatFilter <dark_gray>• <white>Chat filter plugin");
             msg(sender, "<gray>Version <white>" + build.getVersion() + "." + build.getNumber());
             msg(sender, "<gray>Built <white>" + build.getDate() + " <dark_gray>by <white>" + build.getAuthor());
             msg(sender, "<gray>Authors <white><authors>",
