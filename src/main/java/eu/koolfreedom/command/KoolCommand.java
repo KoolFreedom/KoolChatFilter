@@ -28,6 +28,7 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
     protected final KoolChatFilter plugin = KoolChatFilter.getInstance();
 
     protected final String playerNotFound = "<gray>Could not find the specified player.";
+    protected final String consoleOnly = "<red>This command can only be used from the server console.";
 
     /**
      * Constructor to initialize commands. Commands created this way <b>must</b> be annotated with the
@@ -165,53 +166,5 @@ public abstract class KoolCommand extends Command implements PluginIdentifiableC
     protected final void msg(CommandSender sender, String message, TagResolver... placeholders)
     {
         sender.sendRichMessage(message, placeholders);
-    }
-
-    /**
-     * Send an Adventure message to the provided CommandSender.
-     * @param sender		CommandSender
-     * @param message		Component
-     */
-    protected final void msg(CommandSender sender, Component message)
-    {
-        sender.sendMessage(message);
-    }
-
-    /**
-     * Broadcast an Adventure message to the server.
-     * @param message		Component
-     */
-    protected final void broadcast(Component message)
-    {
-        FUtil.broadcast(message);
-    }
-
-    /**
-     * Broadcast an Adventure message to everyone with a specific permission.
-     * @param message		Component
-     */
-    protected final void broadcast(Component message, String permission)
-    {
-        FUtil.broadcast(message, permission);
-    }
-
-    /**
-     * Broadcast a MiniMessage-formatted message to the server.
-     * @param message		String
-     * @param placeholders	TagResolver[]
-     */
-    protected final void broadcast(String message, TagResolver... placeholders)
-    {
-        FUtil.broadcast(message, placeholders);
-    }
-
-    /**
-     * Broadcast a MiniMessage-formatted message to everyone with a specific permission.
-     * @param message		String
-     * @param placeholders	TagResolver[]
-     */
-    protected final void broadcast(String permission, String message, TagResolver... placeholders)
-    {
-        FUtil.broadcast(permission, message, placeholders);
     }
 }

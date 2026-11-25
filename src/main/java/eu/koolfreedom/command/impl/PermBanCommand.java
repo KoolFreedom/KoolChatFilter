@@ -6,14 +6,15 @@ import eu.koolfreedom.command.KoolCommand;
 import eu.koolfreedom.command.annotation.CommandParameters;
 import eu.koolfreedom.utilities.FLog;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.List;
 
 @CommandParameters(
         name = "permbans",
@@ -26,18 +27,28 @@ public class PermBanCommand extends KoolCommand
     @Override
     public boolean run(CommandSender sender, Player playerSender, Command cmd, String s, String[] args)
     {
-        PermBansList bans = PermBansList.get();
+        final PermBansList bans = PermBansList.get();
         if (args.length == 0)
         {
             msg(sender, "<gray>There are <count> permbans.",
-                    Placeholder.unparsed("count", String.valueOf(bans.getBansCount())));
+                    Formatter.number("count", bans.getBansCount()));
             return true;
         }
 
         if (args[0].equalsIgnoreCase("reload"))
         {
+            if (!sender.hasPermission("koolchatfilter.admin"))
+                return false;
+
             bans.reload();
             msg(sender, "<green>Reloaded local punishment entries");
+            return true;
+        }
+
+        if ((args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove"))
+                && !(sender instanceof ConsoleCommandSender))
+        {
+            msg(sender, consoleOnly);
             return true;
         }
 
@@ -47,7 +58,7 @@ public class PermBanCommand extends KoolCommand
             return true;
         }
 
-        String name = args[1];
+        final String name = args[1];
         if (args[0].equalsIgnoreCase("add"))
         {
             if (args.length < 3)
@@ -56,7 +67,7 @@ public class PermBanCommand extends KoolCommand
                 return true;
             }
 
-            Player target = Bukkit.getPlayerExact(name);
+            final Player target = Bukkit.getPlayerExact(name);
             if (target == null)
             {
                 msg(sender, playerNotFound);
@@ -70,7 +81,7 @@ public class PermBanCommand extends KoolCommand
                 return true;
             }
 
-            String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
+            final String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
             bans.banPlayer(target, reason, PunishmentType.PERMANENT_BAN);
             target.kick(Component.text("You have been permanently banned.\nReason: " + reason));
             msg(sender, "<green>Permanently banned <player>: <reason>",
@@ -104,23 +115,5 @@ public class PermBanCommand extends KoolCommand
 
         msg(sender, "<red>Usage: /permbans <add|remove> <name>");
         return true;
-    }
-
-    @Override
-    public List<String> tabComplete(CommandSender sender, Command command, String s, String[] args)
-    {
-        if (!sender.hasPermission("koolchatfilter.admin")) return null;
-
-        if (args.length == 1)
-        {
-            return Arrays.asList("reload", "add", "remove");
-        }
-
-        if (args.length == 2 && (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("remove")))
-        {
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
-        }
-
-        return null;
     }
 }
