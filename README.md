@@ -13,6 +13,7 @@ The filter checks:
 - Sign text when a sign is edited
 - Book pages when a book is edited
 - Item names prepared by an anvil
+- Usernames (cracked/non-premium accounts)
 
 The filter checks submitted text, not existing server messages or text generated
 by other plugins. A chat mute blocks player chat; it does not automatically
