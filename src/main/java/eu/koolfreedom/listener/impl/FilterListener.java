@@ -1,5 +1,6 @@
 package eu.koolfreedom.listener.impl;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import eu.koolfreedom.banning.PermBansList;
 import eu.koolfreedom.banning.PunishmentType;
 import eu.koolfreedom.config.ConfigEntry;
@@ -11,6 +12,8 @@ import eu.koolfreedom.utilities.FLog;
 import eu.koolfreedom.utilities.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerEditBookEvent;
 
@@ -127,6 +131,39 @@ public final class FilterListener extends KoolListener
 
         event.setResult(null);
         punish(player, FilterSource.ANVIL, name, result);
+    }
+
+    /** Filter player usernames in the event that this plugin is used on a cracked/non-premium server */
+    @EventHandler
+    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event)
+    {
+        final PlayerProfile profile = event.getPlayerProfile();
+        final String playerName = profile.getName();
+
+        // Use the same filter as everything else.
+        final FilterResult result = service.check(playerName);
+        if (!result.matched()) return;
+
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, getUsernameKickMessage());
+    }
+
+    private Component getUsernameKickMessage()
+    {
+        final Component DIVIDER = Component.text("                                        ", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH);
+
+        return FUtil.miniMessage(
+                """
+                        <divider>
+                        <newline>
+                        <gray>Your username contains text that is <white>disallowed</white> by the server administrators.
+                        <gray>Please change your username if you want to play!
+                        <gray>If you believe you were falsely flagged, please appeal this at <white><url>
+                        <newline>
+                        <divider>
+                        """,
+                Placeholder.component("divider", DIVIDER),
+                Placeholder.unparsed("url", ConfigEntry.BAN_URL.getString())
+        );
     }
 
     private void punish(Player player, FilterSource source, String content, FilterResult result)
