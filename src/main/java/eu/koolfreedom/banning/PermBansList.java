@@ -358,15 +358,6 @@ public final class PermBansList
         return value * multiplier;
     }
 
-    public boolean isBanned(Player player)
-    {
-        if (player == null) return false;
-        if (isNameBanned(player.getName()) || isUuidBanned(player.getUniqueId().toString())) return true;
-        return player.getAddress() != null
-                && player.getAddress().getAddress() != null
-                && isIpBanned(player.getAddress().getAddress().getHostAddress());
-    }
-
     public boolean isNameBanned(String name)
     {
         BanEntry entry = index.names().get(normalizeName(name));
@@ -415,10 +406,10 @@ public final class PermBansList
      *
      * @return whether the punishment was stored or its external command was handled
      */
-    public synchronized boolean applyPunishment(Player player, String reason, PunishmentType punishment,
-                                                long durationMillis)
+    public synchronized boolean shouldApplyPunishment(Player player, String reason, PunishmentType punishment,
+                                                      long durationMillis)
     {
-        if (player == null || punishment == null) return false;
+        if (player == null || punishment == null) return true;
         String name = normalizeName(player.getName());
         String uuid = player.getUniqueId().toString();
         String ip = player.getAddress() == null || player.getAddress().getAddress() == null
@@ -428,7 +419,7 @@ public final class PermBansList
                 && (durationMillis <= 0 || durationMillis > Long.MAX_VALUE - System.currentTimeMillis()))
         {
             FLog.error("Invalid duration for {} punishment on {}", punishment, name);
-            return false;
+            return true;
         }
 
         String externalCommand = switch (punishment)
@@ -442,12 +433,12 @@ public final class PermBansList
         {
             String duration = punishment == PunishmentType.PERMANENT_BAN
                     ? "permanent" : formatCommandDuration(durationMillis);
-            return dispatchExternalCommand(externalCommand, player.getName(), uuid, ip, safeReason, duration);
+            return !dispatchExternalCommand(externalCommand, player.getName(), uuid, ip, safeReason, duration);
         }
 
         if (punishment != PunishmentType.PERMANENT_BAN
                 && punishment != PunishmentType.TEMPORARY_BAN
-                && punishment != PunishmentType.MUTE) return true;
+                && punishment != PunishmentType.MUTE) return false;
 
         long expiresAt = punishment == PunishmentType.PERMANENT_BAN
                 ? 0 : System.currentTimeMillis() + durationMillis;
@@ -462,12 +453,12 @@ public final class PermBansList
             }
             if (punishment != PunishmentType.MUTE) addIp(name, ip);
             refreshIndex();
-            return true;
+            return false;
         }
         catch (SQLException e)
         {
             FLog.error("Failed to save {} punishment for {}", punishment, name, e);
-            return false;
+            return true;
         }
     }
 
@@ -507,14 +498,9 @@ public final class PermBansList
         return value.replace('\r', ' ').replace('\n', ' ').replace('\0', ' ');
     }
 
-    public void banPlayer(Player player, String reason)
-    {
-        banPlayer(player, reason, PunishmentType.PERMANENT_BAN);
-    }
-
     public void banPlayer(Player player, String reason, PunishmentType punishment)
     {
-        if (!applyPunishment(player, reason, punishment, getConfiguredDurationMillis()))
+        if (shouldApplyPunishment(player, reason, punishment, getConfiguredDurationMillis()))
         {
             FLog.error("Failed to apply {} punishment to {}", punishment, player == null ? "unknown player" : player.getName());
         }
@@ -591,6 +577,26 @@ public final class PermBansList
                 Placeholder.unparsed("ban_duration", banDuration),
                 Placeholder.unparsed("appeal", ConfigEntry.BAN_URL.getString()),
                 Placeholder.component("divider", DIVIDER)
+        );
+    }
+
+    /** Generate a different kick messages for usernames that get filtered as we cannot use the same createKickMessage() Component from above */
+    public Component getUsernameKickMessage()
+    {
+        final Component DIVIDER = Component.text("                                        ", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH);
+
+        return FUtil.miniMessage(
+                """
+                        <divider>
+                        <newline>
+                        <gray>Your username contains text that is <white>disallowed</white> by the server administrators.
+                        <gray>Please change your username if you want to play!
+                        <gray>If you believe you were falsely flagged, please appeal this at <white><url>
+                        <newline>
+                        <divider>
+                        """,
+                Placeholder.component("divider", DIVIDER),
+                Placeholder.unparsed("url", ConfigEntry.BAN_URL.getString())
         );
     }
 

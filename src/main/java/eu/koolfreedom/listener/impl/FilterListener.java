@@ -12,8 +12,6 @@ import eu.koolfreedom.utilities.FLog;
 import eu.koolfreedom.utilities.FUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -144,26 +142,7 @@ public final class FilterListener extends KoolListener
         final FilterResult result = service.check(playerName);
         if (!result.matched()) return;
 
-        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, getUsernameKickMessage());
-    }
-
-    private Component getUsernameKickMessage()
-    {
-        final Component DIVIDER = Component.text("                                        ", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH);
-
-        return FUtil.miniMessage(
-                """
-                        <divider>
-                        <newline>
-                        <gray>Your username contains text that is <white>disallowed</white> by the server administrators.
-                        <gray>Please change your username if you want to play!
-                        <gray>If you believe you were falsely flagged, please appeal this at <white><url>
-                        <newline>
-                        <divider>
-                        """,
-                Placeholder.component("divider", DIVIDER),
-                Placeholder.unparsed("url", ConfigEntry.BAN_URL.getString())
-        );
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, PermBansList.get().getUsernameKickMessage());
     }
 
     private void punish(Player player, FilterSource source, String content, FilterResult result)
@@ -176,7 +155,7 @@ public final class FilterListener extends KoolListener
             final PermBansList banList = PermBansList.get();
             final PunishmentType punishment = banList.getConfiguredPunishment();
             long duration = banList.getConfiguredDurationMillis();
-            if (!banList.applyPunishment(player, reason, punishment, duration))
+            if (banList.shouldApplyPunishment(player, reason, punishment, duration))
             {
                 FLog.error("Could not apply configured {} punishment to {}", punishment, player.getName());
                 return;
