@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -404,16 +405,23 @@ public final class PermBansList
      * Applies a punishment locally or delegates it to the configured external command.
      * KICK, WARNING, and LOG_ONLY require no stored record; callers perform their player-facing action.
      *
-     * @return whether the punishment was stored or its external command was handled
+     * @return true if the punishment FAILED (matches existing behavior), false if stored/handled
      */
     public synchronized boolean shouldApplyPunishment(Player player, String reason, PunishmentType punishment,
                                                       long durationMillis)
     {
         if (player == null || punishment == null) return true;
-        String name = normalizeName(player.getName());
-        String uuid = player.getUniqueId().toString();
         String ip = player.getAddress() == null || player.getAddress().getAddress() == null
                 ? null : player.getAddress().getAddress().getHostAddress();
+        return applyPunishment(player.getName(), player.getUniqueId().toString(), ip,
+                reason, punishment, durationMillis);
+    }
+
+    private synchronized boolean applyPunishment(String displayName, String uuid, String ip, String reason,
+                                                 PunishmentType punishment, long durationMillis)
+    {
+        if (displayName == null || displayName.isBlank() || punishment == null) return true;
+        String name = normalizeName(displayName);
         String safeReason = reason == null ? DEFAULT_REASON : reason;
         if ((punishment == PunishmentType.TEMPORARY_BAN || punishment == PunishmentType.MUTE)
                 && (durationMillis <= 0 || durationMillis > Long.MAX_VALUE - System.currentTimeMillis()))
@@ -433,7 +441,7 @@ public final class PermBansList
         {
             String duration = punishment == PunishmentType.PERMANENT_BAN
                     ? "permanent" : formatCommandDuration(durationMillis);
-            return !dispatchExternalCommand(externalCommand, player.getName(), uuid, ip, safeReason, duration);
+            return !dispatchExternalCommand(externalCommand, displayName, uuid, ip, safeReason, duration);
         }
 
         if (punishment != PunishmentType.PERMANENT_BAN
@@ -445,13 +453,17 @@ public final class PermBansList
         try
         {
             upsertPunishment(name, uuid, safeReason, punishment, expiresAt);
-            try (PreparedStatement clearIps = connection.prepareStatement(
-                    "DELETE FROM punishment_ips WHERE name = ?"))
+            // Offline targets have no known IP, so keep any IPs already stored for them.
+            if (ip != null)
             {
-                clearIps.setString(1, name);
-                clearIps.executeUpdate();
+                try (PreparedStatement clearIps = connection.prepareStatement(
+                        "DELETE FROM punishment_ips WHERE name = ?"))
+                {
+                    clearIps.setString(1, name);
+                    clearIps.executeUpdate();
+                }
+                if (punishment != PunishmentType.MUTE) addIp(name, ip);
             }
-            if (punishment != PunishmentType.MUTE) addIp(name, ip);
             refreshIndex();
             return false;
         }
@@ -498,12 +510,36 @@ public final class PermBansList
         return value.replace('\r', ' ').replace('\n', ' ').replace('\0', ' ');
     }
 
-    public void banPlayer(Player player, String reason, PunishmentType punishment)
+    /** Bans an online player. Returns true if the punishment was applied. */
+    public boolean banPlayer(Player player, String reason, PunishmentType punishment)
     {
         if (shouldApplyPunishment(player, reason, punishment, getConfiguredDurationMillis()))
         {
             FLog.error("Failed to apply {} punishment to {}", punishment, player == null ? "unknown player" : player.getName());
+            return false;
         }
+        return true;
+    }
+
+    /** Bans a player who may be offline. Returns true if the punishment was applied. */
+    public boolean banPlayer(OfflinePlayer target, String reason, PunishmentType punishment)
+    {
+        Player online = target.getPlayer();
+        if (online != null) return banPlayer(online, reason, punishment);
+
+        String name = target.getName();
+        if (name == null || name.isBlank())
+        {
+            FLog.error("Failed to apply {} punishment: offline player has no known name", punishment);
+            return false;
+        }
+        if (applyPunishment(name, target.getUniqueId().toString(), null, reason, punishment,
+                getConfiguredDurationMillis()))
+        {
+            FLog.error("Failed to apply {} punishment to {}", punishment, name);
+            return false;
+        }
+        return true;
     }
 
     public boolean unbanPlayer(String name)

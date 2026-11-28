@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -22,6 +23,7 @@ import java.util.Arrays;
         usage = "/<command> [reload|add <name> <reason>|remove <name>]",
         aliases = {"indefbans", "indefban", "permban"}
 )
+@SuppressWarnings({"ConstantConditions", "null"})
 public class PermBanCommand extends KoolCommand
 {
     @Override
@@ -38,8 +40,10 @@ public class PermBanCommand extends KoolCommand
         if (args[0].equalsIgnoreCase("reload"))
         {
             if (!sender.hasPermission("koolchatfilter.admin"))
-                return false;
-
+            {
+                msg(sender, consoleOnly);
+                return true;
+            }
             bans.reload();
             msg(sender, "<green>Reloaded local punishment entries");
             return true;
@@ -67,25 +71,32 @@ public class PermBanCommand extends KoolCommand
                 return true;
             }
 
-            final Player target = Bukkit.getPlayerExact(name);
-            if (target == null)
-            {
-                msg(sender, playerNotFound);
-                return true;
-            }
+            final OfflinePlayer target = Bukkit.getOfflinePlayer(name);
+            final String targetName = target.getName() != null ? target.getName() : name;
 
-            if (bans.isNameBanned(target.getName()) || bans.isUuidBanned(target.getUniqueId().toString()))
+            if (bans.isNameBanned(targetName) || bans.isUuidBanned(target.getUniqueId().toString()))
             {
                 msg(sender, "<yellow><player> is already permanently banned.",
-                        Placeholder.unparsed("player", target.getName()));
+                        Placeholder.unparsed("player", targetName));
                 return true;
             }
 
             final String reason = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-            bans.banPlayer(target, reason, PunishmentType.PERMANENT_BAN);
-            target.kick(Component.text("You have been permanently banned.\nReason: " + reason));
+            if (!bans.banPlayer(target, reason, PunishmentType.PERMANENT_BAN))
+            {
+                msg(sender, "<red>Failed to ban <player>.",
+                        Placeholder.unparsed("player", targetName));
+                return true;
+            }
+
+            final Player online = target.getPlayer(); // null if offline
+            if (online != null)
+            {
+                online.kick(Component.text("You have been permanently banned.\nReason: " + reason));
+            }
+
             msg(sender, "<green>Permanently banned <player>: <reason>",
-                    Placeholder.unparsed("player", target.getName()),
+                    Placeholder.unparsed("player", targetName),
                     Placeholder.unparsed("reason", reason));
             return true;
         }
